@@ -2,9 +2,9 @@
 
 const postList = [
   {
-    'username': 'user1',
-    'caption': 'omg a cat',
-    'likesAmount': '50',
+    'username': 'maxusernameof16c',
+    'caption': 'this caption is 255 characters in total which is max size of tinytext, tinytext is how this caption is saved to database. i ran out what to say so im just gonna go Lorem ipsum in here. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aliquam id ru',
+    'likesAmount': 50000,
     'commentsUsername': ['user1', 'user2', 'user3'],
     'commentsText': ['omg my own post', 'jeez', 'ceissi'],
 
@@ -12,7 +12,7 @@ const postList = [
   {
     'username': 'user2',
     'caption': 'this a cat',
-    'likesAmount': '100',
+    'likesAmount': 100,
     'commentsUsername': ['user2', 'user3', 'user1'],
     'commentsText': ['omg my own post', 'jeez', 'ceissi'],
 
@@ -20,7 +20,7 @@ const postList = [
   {
     'username': 'user3',
     'caption': 'bruh cat',
-    'likesAmount': '70',
+    'likesAmount': 70,
     'commentsUsername': ['user3', 'user1', 'user2'],
     'commentsText': ['omg my own post', 'jeez', 'ceissi'],
 
@@ -101,13 +101,22 @@ for (let i = 0; i < postList.length; i++) {
   postContentDiv.appendChild(postContent);
 
 //Caption
+  //Caption text
   const postCaption = document.createElement('p');
+  postCaption.className = 'hideCaption';
   postCaption.innerText = postList[i].caption;
+
+  //This creates Show more "button"
+  const showMoreLink = document.createElement('a');
+  showMoreLink.href = '#';
+  showMoreLink.innerText = 'Show more';
+
   postCaptionDiv.appendChild(postCaption);
+  postCaptionDiv.appendChild(showMoreLink);
 
 //Like amount
   const postLikes = document.createElement('p');
-  postLikes.innerText = postList[i].likesAmount + " likes";
+  postLikes.innerText = postList[i].likesAmount + ' likes';
   postLikesDiv.appendChild(postLikes);
 
 //Like, dislike and comment icons/buttons
@@ -126,7 +135,7 @@ for (let i = 0; i < postList.length; i++) {
   postOptionsDiv.appendChild(postCommentButtonDiv);
 
 //Comments
-  for(let f = 0; f < postList[i].commentsUsername.length; f++) {
+  for (let f = 0; f < postList[i].commentsUsername.length; f++) {
     const postCommentDiv = document.createElement('div');
     const postCommentUsername = document.createElement('p');
     const postCommentContent = document.createElement('p');
@@ -170,18 +179,29 @@ for (let i = 0; i < postList.length; i++) {
   postLikeButtonDiv.addEventListener('click', () => {
     console.log('Like clicked at post number ' + i);
     postList[i].likesAmount++;
-    postLikes.innerText = postList[i].likesAmount + " likes";
-    console.log('likesamount is now '+postList[i].likesAmount);
+    postLikes.innerText = postList[i].likesAmount + ' likes';
+    console.log('likesamount is now ' + postList[i].likesAmount);
   });
 
   postDislikeButtonDiv.addEventListener('click', () => {
     console.log('Dislike clicked at post number ' + i);
     postList[i].likesAmount--;
-    postLikes.innerText = postList[i].likesAmount + " likes";
-    console.log('likesamount is now '+postList[i].likesAmount);
+    postLikes.innerText = postList[i].likesAmount + ' likes';
+    console.log('likesamount is now ' + postList[i].likesAmount);
   });
   postCommentButtonDiv.addEventListener('click', () => {
     console.log('Comment clicked at post number ' + i);
+  });
+
+  //Show more "Button"
+  showMoreLink.addEventListener('click', () => {
+    if (showMoreLink.innerText === 'Show more') {
+      showMoreLink.innerText = 'Show less';
+      postCaption.className = 'showCaption';
+    } else {
+      showMoreLink.innerText = 'Show more';
+      postCaption.className = 'hideCaption';
+    }
   });
 }
 

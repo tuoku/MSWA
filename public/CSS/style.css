@@ -45,14 +45,14 @@ body {
     margin: 10px 0;
 }
 .post-end{
-    width: 100%;
+    max-width: 95%;
     display: flex;
     flex-wrap: wrap;
     margin: 0 5px 0 15px
 }
 .post-caption {
     width: 100%;
-    max-height: 32px;
+    /*max-height: 32px;*/
     margin-bottom: 10px;
 }
 .post-caption p {
@@ -62,7 +62,7 @@ body {
 .post-options {
     display: flex;
     flex-wrap: wrap;
-    width: 50%;
+    width: 65%;
     justify-content: flex-end;
 }
 .post-like-button {
@@ -75,7 +75,7 @@ body {
     margin-left: 5px;
 }
 .post-likes{
-    width: 50%;
+    width: 35%;
     margin-top: 5px;
     font-weight: bold;
     font-size: 18px;
@@ -99,4 +99,15 @@ body {
 #post-comment-username {
     font-weight: bold;
     margin-right: 10px;
+}
+
+.hideCaption {
+    overflow: hidden;
+    line-height: 1em;
+    height: 1em;
+}
+.showCaption {
+    line-height: 1em;
+    height: auto;
+    word-wrap: break-word;
 }
