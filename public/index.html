@@ -2,12 +2,55 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Title</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Feed</title>
+    <link rel="stylesheet" href="CSS/index.css">
+    <link rel="preconnect" href="https://fonts.gstatic.com/%22%3E">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 </head>
 <body>
-    Hello World
-<p>
-    test1
-</p>
+    <!-- header -->
+    <header>
+        <button id="loginBtn"></button>
+        <button id="logoutBtn" class="hidden"></button>
+    </header>
+
+    <!-- load posts here (inside some container) -->
+
+    <!-- bottom navigation bar, shown only to logged in users -->
+    <nav id="bottomNav" class="hidden">
+        <button id="homeBtn"></button>
+        <button id="addPostBtn">+</button>
+        <button id="myProfileBtn"></button>
+    </nav>
+    <!-- registration and logging in modals, shown when the login button in header is clicked-->
+    <div id="registerModal" class="modal hidden">
+        <button class="modalClose">x</button>
+        <div class="form">
+            Register
+            <form id="registerForm">
+                <input type="text" name="username" placeholder="username">
+                <input type="email" name="email" placeholder="example@example.com">
+                <input type="password" name="password" placeholder="password">
+                <button class="submitBtn">Register</button>
+            </form>
+            <br> Already a member? <br>
+            <a href="javascript:logInsteadOfReg()">Log in</a>
+        </div>
+    </div>
+    <div id="loginModal" class="modal hidden">
+        <button class="modalClose">x</button>
+        <div class="form">
+            Log in
+            <form id="loginForm">
+                <input type="text" name="username" placeholder="username">
+                <input type="password" name="password" placeholder="password">
+                <button class="submitBtn">Log in</button>
+            </form>
+        </div>
+    </div>
+    <script src="JS/index.js"></script>
+    <script src="JS/serialize.js"></script>
+
 </body>
 </html>
