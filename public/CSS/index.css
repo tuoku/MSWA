@@ -11,7 +11,7 @@ header {
     position: absolute;
     top: 0;
     width: 100%;
-    height: 10vh;
+    height: 7vh;
     background-color: white;
     box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2);
 }
@@ -66,8 +66,8 @@ nav {
     background-image: url('../ICONS/login.png');
     border: none;
     outline: none;
-    height: 6vh;
-    width: 6vh;
+    height: 5vh;
+    width: 5vh;
     background-size: contain;
     background-color: transparent;
     margin-right: 10px;
@@ -77,8 +77,8 @@ nav {
     background-image: url('../ICONS/logout.png');
     border: none;
     outline: none;
-    height: 6vh;
-    width: 6vh;
+    height: 5vh;
+    width: 5vh;
     background-size: contain;
     background-color: transparent;
     margin-right: 10px;
@@ -102,7 +102,7 @@ nav {
     text-align: center;
     font-family: 'Poppins', sans-serif;
     border-radius: 10px;
-
+    padding-top: 20px;
 }
 
 .form form {
@@ -118,6 +118,10 @@ form input, button {
     font-family: 'Poppins', sans-serif;
     max-width: 90%;
     border-radius: 10px;
+}
+input {
+    padding: 6px 6px;
+    box-sizing: border-box;
 }
 
 .hidden {
