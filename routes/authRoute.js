@@ -6,10 +6,12 @@ const parser = require('body-parser');
 const urlencodedParser = parser.urlencoded({extended: false});
 const jsonParser = parser.json()
 const {body, sanitizeBody} = require('express-validator');
+const passport = require('../utils/pass')
 
-router.post('/login',urlencodedParser, authController.login);
-router.get('/logout', authController.logout);
-router.post('/register', urlencodedParser,
+router.post('/login',jsonParser, authController.login);
+// logout requires jwt auth
+router.get('/logout', passport.authenticate('jwt', {session: false}), authController.logout);
+router.post('/register', jsonParser,
     [
       body('username', 'minimum 3 characters').isLength({min: 3}),
       body('email', 'email is not valid').isEmail(),
