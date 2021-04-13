@@ -47,8 +47,21 @@ const getUserLogin = async (params) => {
   }
 };
 
+// get users whose username starts with the specified letters
+const getUsersByFirstChars = async (letters) => {
+  try {
+    console.log(letters);
+    const [rows] = await promisePool.execute(
+        'SELECT * FROM user WHERE username LIKE CONCAT(?,"%");', [letters]);
+    return rows;
+  } catch (e) {
+    console.log('error', e.message);
+  }
+}
+
 module.exports = {
   getUser,
   addUser,
   getUserLogin,
+  getUsersByFirstChars,
 };
