@@ -1,10 +1,12 @@
 'use strict';
+const pool = require('../database/db');
+// const promisePool = pool.promise();
 
 const postList = [
   {
     'username': 'maxusernameof16c',
     'caption': 'this caption is 255 characters in total which is max size of tinytext, tinytext is how this caption is saved to database. i ran out what to say so im just gonna go Lorem ipsum in here. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aliquam id ru',
-    'likesAmount': 50000,
+    'likesAmount': 2147483647,
     'commentsUsername': ['user1', 'user2', 'user3'],
     'commentsText': ['omg my own post', 'jeez', 'ceissi'],
 
@@ -26,6 +28,17 @@ const postList = [
 
   },
 ];
+
+// const postList = async () => {
+//   try {
+//     console.log('postcreate sql run');
+//     const [rows] = await promisePool.query('SELECT * FROM user_post');
+//     return rows[0];
+//   } catch (e) {
+//     console.error('userModel:', e.message);
+//   }
+// };
+
 
 const body = document.querySelector('body');
 
@@ -167,6 +180,7 @@ for (let i = 0; i < postList.length; i++) {
 
   main.appendChild(post);
 
+
   //Functionality
   postUserUsernameDiv.addEventListener('click', () => {
     console.log('Username clicked at post number ' + i);
@@ -189,8 +203,50 @@ for (let i = 0; i < postList.length; i++) {
     postLikes.innerText = postList[i].likesAmount + ' likes';
     console.log('likesamount is now ' + postList[i].likesAmount);
   });
+
   postCommentButtonDiv.addEventListener('click', () => {
     console.log('Comment clicked at post number ' + i);
+    if(document.getElementById('write-comment-box' + i)) {
+      const commentBox = document.getElementById('write-comment-box' + i);
+      commentBox.remove();
+    }else {
+      const newCommentBox = document.createElement('div');
+      newCommentBox.id = "write-comment-box" + i;
+
+      const commentForm = document.createElement('FORM');
+      const commentInputText = document.createElement('INPUT');
+      const commentSubmit = document.createElement('INPUT');
+      commentInputText.setAttribute('type', 'text');
+      commentSubmit.setAttribute('type', 'submit');
+      commentSubmit.value = 'Comment';
+
+      commentInputText.id = 'commentInputText';
+      commentSubmit.id = 'commentSubmit';
+
+      commentForm.onsubmit = () => {
+        console.log('uploaded comment was: '+commentInputText.value);
+
+        const commentBox = document.getElementById('write-comment-box' + i);
+        commentBox.remove();
+
+        const postCommentDiv = document.createElement('div');
+        const postCommentUsername = document.createElement('p');
+        const postCommentContent = document.createElement('p');
+        postCommentDiv.id = 'post-comment';
+        postCommentUsername.id = 'post-comment-username';
+        postCommentContent.id = 'post-comment-content';
+        postCommentUsername.innerText = 'user4';
+        postCommentContent.innerText = commentInputText.value;
+
+        postCommentDiv.appendChild(postCommentUsername);
+        postCommentDiv.appendChild(postCommentContent);
+        postCommentsDiv.appendChild(postCommentDiv);
+      }
+      commentForm.appendChild(commentInputText);
+      commentForm.appendChild(commentSubmit);
+      newCommentBox.appendChild(commentForm);
+      postCommentsDiv.appendChild(newCommentBox);
+    }
   });
 
   //Show more "Button"
