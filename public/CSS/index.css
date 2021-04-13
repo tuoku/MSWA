@@ -149,6 +149,7 @@ input {
     border: none;
     transition: width 0.4s ease-in-out;
     outline: none;
+    max-height: 100%;
 }
 #headerSearch:focus {
     width: 90%;
