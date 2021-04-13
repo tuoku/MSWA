@@ -126,28 +126,28 @@ searchBar.addEventListener('input', async ev => {
   // if user has typed 3 or more chars
   if(val.length >= 3) {
     closeAllLists()
-    /*create a DIV element that will contain the items (values):*/
+    // create a div that will contain the suggestions:
     a = document.createElement("DIV");
     a.setAttribute("id", this.id + "autocomplete-list");
     a.setAttribute("class", "autocomplete-items");
-    /*append the DIV element as a child of the autocomplete container:*/
+    //append the div element as a child of the autocomplete container:
     searchBar.parentNode.appendChild(a);
-    /*for each item in the array...*/
+    // for each item in the array...
     for (let i = 0; i < userSearchArray.length; i++) {
-      /*check if the item starts with the same letters as the text field value:*/
-      if (userSearchArray[i].username.toString().substr(0, val.length).toUpperCase() == val.toUpperCase()) {
-        /*create a DIV element for each matching element:*/
-        b = document.createElement("DIV");
+      // check if the item starts with the same letters as the text field value:
+      if (userSearchArray[i].username.toString().substr(0, val.length).toUpperCase() === val.toUpperCase()) {
+        // create a DIV element for each matching element:
+        let b = document.createElement("DIV");
         let imgSrc = './ICONS/profile.png'
         // insert profile pic
         b.innerHTML = "<img src='"+ imgSrc + "' class='suggestionImg'>"
-        /*make the matching letters bold:*/
+        // make the matching letters bold:
         b.innerHTML += "<strong>" + userSearchArray[i].username.toString().substr(0, val.length) + "</strong>";
         b.innerHTML += userSearchArray[i].username.toString().substr(val.length);
-        /*insert a input field that will hold the current array item's value:*/
+        // insert a input field that will hold the current array item's value:
         b.innerHTML += "<input type='hidden' value='" + userSearchArray[i] + "'>";
-        /*execute a function when someone clicks on the item value (DIV element):*/
-        b.addEventListener("click", function(e) {
+        // execute a function when someone clicks on the item value (DIV element):
+        b.addEventListener("click", (e) => {
 
           // TODO: go to user profile when suggestion is clicked
 
