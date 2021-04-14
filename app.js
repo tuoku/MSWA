@@ -8,6 +8,7 @@ const userRoute = require('./routes/userRoute');
 
 app.use(cors());
 
+app.use('/uploads', express.static('./uploads'))
 app.use('/auth', authRoute)
 app.use('/user', userRoute)
 

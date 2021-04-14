@@ -138,7 +138,7 @@ searchBar.addEventListener('input', async ev => {
       if (userSearchArray[i].username.toString().substr(0, val.length).toUpperCase() === val.toUpperCase()) {
         // create a DIV element for each matching element:
         let b = document.createElement("DIV");
-        let imgSrc = './ICONS/profile.png'
+        let imgSrc = url + '/uploads/profile/' + userSearchArray[i].id + '.jpg'
         // insert profile pic
         b.innerHTML = "<img src='"+ imgSrc + "' class='suggestionImg'>"
         // make the matching letters bold:
