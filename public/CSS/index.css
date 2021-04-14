@@ -196,4 +196,6 @@ input {
 
 .suggestionImg {
     height: 5vh;
+    border-radius: 100%;
+    margin-right: 10px;
 }
