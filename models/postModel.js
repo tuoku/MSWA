@@ -82,11 +82,38 @@ const givePostDislike = async (post_id, user_id) => {
   }
 }
 
+const deleteVote = async (post_id, user_id) => {
+  //TODO: select is it like or dislike, then update that value to post itself
+  try{
+    const [row] = await promisePool.query('SELECT * FROM post_like WHERE post_id = ? AND user_id = ?', [post_id, user_id]);
+    console.log(row[0].hasLiked);
+    //This transforms BIT into BOOL, continues if hasLiked true and hasDisliked false
+    if(row[0].hasLiked.lastIndexOf(1) !== -1 && !row[0].hasDisliked.lastIndexOf(1) !== -1) {
+      //If hasLiked is true then do a query to update user_post to do likesAmount -1
+      console.log('INSIDE DELETEVOTE IF(1) and hasLiked is 1');
+      await promisePool.execute('DELETE FROM post_like WHERE post_id = ? AND user_id = ?', [post_id, user_id]);
+      await promisePool.execute('UPDATE user_post SET likesAmount = likesAmount - 1 WHERE post_id = ?', [post_id]);
+    }
+    //Same as last if but reversed
+    else if(!row[0].hasLiked.lastIndexOf(1) !== -1 && row[0].hasDisliked.lastIndexOf(1) !== -1) {
+      //If hasLiked is true then do a query to update user_post to do likesAmount -1
+      console.log('INSIDE DELETEVOTE IF(2) and hasDisliked is 1');
+      await promisePool.execute('DELETE FROM post_like WHERE post_id = ? AND user_id = ?', [post_id, user_id]);
+      await promisePool.execute('UPDATE user_post SET likesAmount = likesAmount + 1 WHERE post_id = ?', [post_id]);
+    }
+
+    //await promisePool.execute('DELETE FROM post_like WHERE post_id = ? AND user_id = ?', [post_id, user_id]);
+  }catch (e) {
+    console.error('deleteVote:', e.message);
+  }
+}
+
 module.exports = {
   getAllPosts,
   getPostComments,
   givePostLike,
   givePostDislike,
+  deleteVote,
 };
 
 // const getUser = async (id) => {

@@ -14,17 +14,21 @@ const getPosts = async () => {
 };
 
 const giveLike = async (postid, ownerid) => {
-  const response = await fetch(url + '/post/' + postid + '/likeowner/' + ownerid);
+  const response = await fetch(url + '/post/' + postid + '/likeowner/' + ownerid + '/like');
   const hasLiked = await response.json();
-  console.log(hasLiked);
+  console.log('hasLiked in function giveLike:'+hasLiked);
   return hasLiked;
 }
 
 const giveDislike = async (postid, ownerid) => {
-  const response = await fetch(url + '/post/' + postid + '/likeowner/' + ownerid);
+  const response = await fetch(url + '/post/' + postid + '/likeowner/' + ownerid + '/dislike');
   const hasDisliked = await response.json();
   console.log(hasDisliked);
   return hasDisliked;
+}
+
+const deleteVote = async (postid, ownerid) => {
+  await fetch(url + '/post/' + postid + '/likeowner/' + ownerid + '/delete');
 }
 
 //Fetches post owners username using id
@@ -198,13 +202,21 @@ const createPosts = async (posts) => {
 
     postLikeButtonDiv.addEventListener('click', () => {
       console.log('Like clicked at post number ' + post.post_id);
-      //TODO: ownerid should be logged in user
-      const likeGiven = giveLike(post.post_id, 1);
-      if(likeGiven) {
-        const likeBaseAmount = post.likesAmount;
-        postLikes.innerText = (likeBaseAmount+1).toString() + ' likes';
 
-      }
+      //TODO: ownerid should be logged in user
+      giveLike(post.post_id, 1).then( (response) => {
+        console.log('inside likegiven then: '+response);
+        if(response) {
+          const likeBaseAmount = post.likesAmount;
+          postLikes.innerText = (likeBaseAmount+1).toString() + ' likes';
+        }else{
+          //TODO:delete vote
+          //TODO: ownerid should be logged in user
+          deleteVote(post.post_id, 1);
+          const likeBaseAmount = post.likesAmount;
+          postLikes.innerText = (likeBaseAmount).toString() + ' likes';
+        }
+      });
       console.log('likesamount is in database as ' + post.likesAmount);
       console.log('likesamount showing to user is ' + postLikes.innerText);
     });
@@ -212,11 +224,19 @@ const createPosts = async (posts) => {
     postDislikeButtonDiv.addEventListener('click', () => {
       console.log('Disike clicked at post number ' + post.post_id);
       //TODO: ownerid should be logged in user
-      const DislikeGiven = giveDislike(post.post_id, 1);
-      if(DislikeGiven) {
-        const likeBaseAmount = post.likesAmount;
-        postLikes.innerText = (likeBaseAmount-1).toString() + ' likes';
-      }
+      giveDislike(post.post_id, 1).then( (response) => {
+        console.log('inside dislikegiven then: '+response);
+        if(response) {
+          const likeBaseAmount = post.likesAmount;
+          postLikes.innerText = (likeBaseAmount-1).toString() + ' likes';
+        }else{
+          //TODO: delete vote
+          //TODO: ownerid should be logged in user
+          deleteVote(post.post_id, 1);
+          const likeBaseAmount = post.likesAmount;
+          postLikes.innerText = (likeBaseAmount).toString() + ' likes';
+        }
+      });
       console.log('likesamount is in database as ' + post.likesAmount);
       console.log('likesamount showing to user is ' + postLikes.innerText);
     });

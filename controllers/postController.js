@@ -28,10 +28,15 @@ const post_dislike = async (req ,res) => {
   console.log('hasdisliked in controller: ' + hasDisliked);
   res.json(hasDisliked);
 }
+
+const post_vote_delete = async (req, res) => {
+  await postModel.deleteVote(req.params.postid, req.params.ownerid);
+}
 module.exports = {
   posts_get,
   post_get_owner_username,
   post_get_comments,
   post_like,
   post_dislike,
+  post_vote_delete,
 };
