@@ -7,6 +7,9 @@ const registerForm = document.getElementById('registerForm');
 const loginForm = document.getElementById('loginForm');
 const bottomNav = document.getElementById('bottomNav');
 const searchBar = document.getElementById('headerSearch');
+const myProfileBtn = document.getElementById('myProfileBtn');
+const homeBtn = document.getElementById('homeBtn');
+
 // Array for storing users fetched during searchbar input
 let userSearchArray;
 
@@ -145,13 +148,12 @@ searchBar.addEventListener('input', async ev => {
         b.innerHTML += "<strong>" + userSearchArray[i].username.toString().substr(0, val.length) + "</strong>";
         b.innerHTML += userSearchArray[i].username.toString().substr(val.length);
         // insert a input field that will hold the current array item's value:
-        b.innerHTML += "<input type='hidden' value='" + userSearchArray[i] + "'>";
+        b.innerHTML += "<input type='hidden' value='" + userSearchArray[i].id + "'>";
         // execute a function when someone clicks on the item value (DIV element):
         b.addEventListener("click", (e) => {
-
-          // TODO: go to user profile when suggestion is clicked
-
-          closeAllLists();
+          //closeAllLists();
+          console.log(this)
+          window.location.href = 'profile.html?id=' + userSearchArray[i].id
         });
         a.appendChild(b);
       }
@@ -180,6 +182,23 @@ const logInsteadOfReg = () => {
   registerModal.classList.add('hidden')
   loginModal.classList.remove('hidden')
 }
+
+const parseJwt = (token) => {
+  try {
+    return JSON.parse(atob(token.split('.')[1]));
+  } catch (e) {
+    return null;
+  }
+};
+
+myProfileBtn.addEventListener('click', (ev => {
+  const user = parseJwt(sessionStorage.getItem('token'))
+  window.location.href = 'profile.html?id=' + user.id
+}))
+
+homeBtn.addEventListener('click', ev => {
+  window.location.href = 'index.html'
+})
 
 // when app starts, check if token exists ( = user is already logged in )
 // and show the bottomnav + logout button

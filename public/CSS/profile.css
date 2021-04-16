@@ -1,0 +1,86 @@
+body {
+    margin:0;
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+    font-family: 'Poppins', sans-serif;
+    overflow:scroll;
+
+}
+body::-webkit-scrollbar{
+    display: none;
+}
+
+header {
+    width: 100%;
+    position: sticky;
+    position: -webkit-sticky;
+    top:0;
+}
+
+#featuredArt {
+    width: 100%;
+    max-height: 25vh;
+}
+
+#profileContent {
+    display: flex;
+    flex-flow: column nowrap;
+    align-items: center;
+}
+
+#profileInfo {
+    background-color: #fafafa;
+    width:100%;
+    display: flex;
+    align-content: center;
+    align-items: center;
+    flex-flow: row nowrap;
+    max-height: 30vh;
+    justify-content: center;
+    text-align: center;
+}
+
+#profileBio {
+    width:80%;
+    text-align: center;
+}
+
+#profilePic {
+    max-height:25vw;
+    border-radius: 100%;
+    border: 5px solid white;
+}
+
+#feeds {
+    display: flex;
+    flex-flow: row wrap;
+}
+
+.feedPic {
+    width: 28vw;
+    height: 28vw;
+    margin: 2vw;
+}
+
+#feedTitles {
+    position: -webkit-sticky;
+    position: sticky;
+    top:7vh;
+    background-color: #fafafa;
+    width: 100%;
+    text-align: center;
+}
+
+
+nav {
+    position: sticky;
+    position: -webkit-sticky;
+    bottom:0;
+}
+
+#followBtn {
+    background-color: transparent;
+    border: 2px solid black;
+    font-size: large;
+    cursor: pointer;
+}

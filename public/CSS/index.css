@@ -49,6 +49,7 @@ nav {
     border: none;
     outline: none;
     background-color: transparent;
+    cursor: pointer;
 }
 
 #myProfileBtn {
@@ -60,6 +61,7 @@ nav {
     border: none;
     outline: none;
     background-color: transparent;
+    cursor: pointer;
 }
 
 #loginBtn {

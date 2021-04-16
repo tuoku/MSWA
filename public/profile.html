@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Title</title>
+    <!-- reuse css from index for header + bottomNav -->
+    <link rel="stylesheet" href="CSS/index.css">
+    <link rel="stylesheet" href="CSS/profile.css">
+    <link rel="preconnect" href="https://fonts.gstatic.com/%22%3E">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <header>
+        <input type="text" placeholder="Search users" id="headerSearch">
+        <button id="loginBtn"></button>
+        <button id="logoutBtn" class="hidden"></button>
+    </header>
+    <div id="profileContent">
+        <div id="profileInfo">
+            <button id="followBtn">Follow</button>
+            <figure>
+                <img src="https://st.depositphotos.com/1779253/5140/v/600/depositphotos_51405259-stock-illustration-male-avatar-profile-picture-use.jpg" id="profilePic">
+                <figcaption id="username">username</figcaption>
+            </figure>
+            <p id="followerAmount">0 <br> followers</p>
+        </div>
+        <div id="profileBio">
+            <p>
+                lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum
+            </p>
+        </div>
+        <div id="feedTitles">
+            <p> <strong>Artworks</strong> </p>
+        </div>
+        <div id="feeds">
+            <img src="https://payload.cargocollective.com/1/5/178997/14228511/prt_500x500_1613656847_2x.jpg" class="feedPic">
+            <img src="https://payload.cargocollective.com/1/5/178997/14228511/prt_500x500_1613656847_2x.jpg" class="feedPic">
+            <img src="https://payload.cargocollective.com/1/5/178997/14228511/prt_500x500_1613656847_2x.jpg" class="feedPic">
+            <img src="https://payload.cargocollective.com/1/5/178997/14228511/prt_500x500_1613656847_2x.jpg" class="feedPic">
+            <img src="https://payload.cargocollective.com/1/5/178997/14228511/prt_500x500_1613656847_2x.jpg" class="feedPic">
+            <img src="https://payload.cargocollective.com/1/5/178997/14228511/prt_500x500_1613656847_2x.jpg" class="feedPic">
+            <img src="https://payload.cargocollective.com/1/5/178997/14228511/prt_500x500_1613656847_2x.jpg" class="feedPic">
+            <img src="https://payload.cargocollective.com/1/5/178997/14228511/prt_500x500_1613656847_2x.jpg" class="feedPic">
+            <img src="https://payload.cargocollective.com/1/5/178997/14228511/prt_500x500_1613656847_2x.jpg" class="feedPic">
+            <img src="https://payload.cargocollective.com/1/5/178997/14228511/prt_500x500_1613656847_2x.jpg" class="feedPic">
+            <img src="https://payload.cargocollective.com/1/5/178997/14228511/prt_500x500_1613656847_2x.jpg" class="feedPic">
+            <img src="https://payload.cargocollective.com/1/5/178997/14228511/prt_500x500_1613656847_2x.jpg" class="feedPic">
+            <img src="https://payload.cargocollective.com/1/5/178997/14228511/prt_500x500_1613656847_2x.jpg" class="feedPic">
+            <img src="https://payload.cargocollective.com/1/5/178997/14228511/prt_500x500_1613656847_2x.jpg" class="feedPic">
+            <img src="https://payload.cargocollective.com/1/5/178997/14228511/prt_500x500_1613656847_2x.jpg" class="feedPic">
+            <img src="https://payload.cargocollective.com/1/5/178997/14228511/prt_500x500_1613656847_2x.jpg" class="feedPic">
+            <img src="https://payload.cargocollective.com/1/5/178997/14228511/prt_500x500_1613656847_2x.jpg" class="feedPic">
+            <img src="https://payload.cargocollective.com/1/5/178997/14228511/prt_500x500_1613656847_2x.jpg" class="feedPic">
+            <img src="https://payload.cargocollective.com/1/5/178997/14228511/prt_500x500_1613656847_2x.jpg" class="feedPic">
+            <img src="https://payload.cargocollective.com/1/5/178997/14228511/prt_500x500_1613656847_2x.jpg" class="feedPic">
+            <img src="https://payload.cargocollective.com/1/5/178997/14228511/prt_500x500_1613656847_2x.jpg" class="feedPic">
+            <img src="https://payload.cargocollective.com/1/5/178997/14228511/prt_500x500_1613656847_2x.jpg" class="feedPic">
+            <img src="https://payload.cargocollective.com/1/5/178997/14228511/prt_500x500_1613656847_2x.jpg" class="feedPic">
+            <img src="https://payload.cargocollective.com/1/5/178997/14228511/prt_500x500_1613656847_2x.jpg" class="feedPic">
+            <img src="https://payload.cargocollective.com/1/5/178997/14228511/prt_500x500_1613656847_2x.jpg" class="feedPic">
+            <img src="https://payload.cargocollective.com/1/5/178997/14228511/prt_500x500_1613656847_2x.jpg" class="feedPic">
+        </div>
+    </div>
+    <!-- bottom navigation bar, shown only to logged in users -->
+    <nav id="bottomNav" class="hidden">
+        <button id="homeBtn"></button>
+        <button id="addPostBtn">+</button>
+        <button id="myProfileBtn"></button>
+    </nav>
+    <!-- registration and logging in modals, shown when the login button in header is clicked-->
+    <div id="registerModal" class="modal hidden">
+        <button class="modalClose">x</button>
+        <div class="form">
+            Register
+            <form id="registerForm">
+                <input type="text" name="username" placeholder="username">
+                <input type="email" name="email" placeholder="example@example.com">
+                <input type="password" name="password" placeholder="password">
+                <button class="submitBtn">Register</button>
+            </form>
+            <br> Already a member? <br>
+            <a href="javascript:logInsteadOfReg()">Log in</a>
+        </div>
+    </div>
+    <div id="loginModal" class="modal hidden">
+        <button class="modalClose">x</button>
+        <div class="form">
+            Log in
+            <form id="loginForm">
+                <input type="text" name="username" placeholder="username">
+                <input type="password" name="password" placeholder="password">
+                <button class="submitBtn">Log in</button>
+            </form>
+        </div>
+    </div>
+    <script src="JS/index.js"></script>
+    <script src="JS/serialize.js"></script>
+    <script src="JS/profile.js"></script>
+</body>
+</html>
