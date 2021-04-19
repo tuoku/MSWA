@@ -51,7 +51,10 @@ const getPostComment = async (id) => {
 const uploadPostComment = async (postid, ownerid, comment) => {
   const fetchOptions = {
     method: 'POST',
-    body: comment,
+    body: JSON.stringify(comment),
+    headers: {
+      'Content-Type': 'application/json',
+    },
   };
   const response = await fetch(url + '/post/' + postid + '/comment/' + ownerid, fetchOptions);
   return await response.json();
@@ -245,6 +248,7 @@ const createPosts = async (posts) => {
     });
 
     postCommentButtonDiv.addEventListener('click', () => {
+
       console.log('Comment clicked at post number ' + post.post_id);
       if(document.getElementById('write-comment-box' + post.post_id)) {
         const commentBox = document.getElementById('write-comment-box' + post.post_id);
@@ -261,11 +265,15 @@ const createPosts = async (posts) => {
         commentSubmit.value = 'Comment';
 
         commentInputText.id = 'commentInputText';
+        commentInputText.name = 'commentInput';
         commentSubmit.id = 'commentSubmit';
 
-        //TODO: Comment should be added to post_comment
-        commentForm.onsubmit = () => {
+        commentForm.appendChild(commentInputText);
+        commentForm.appendChild(commentSubmit);
+        newCommentBox.appendChild(commentForm);
+        postCommentsDiv.appendChild(newCommentBox);
 
+        commentForm.addEventListener('submit', async (e) => {
           const commentBox = document.getElementById('write-comment-box' + post.post_id);
           commentBox.remove();
 
@@ -278,17 +286,45 @@ const createPosts = async (posts) => {
           postCommentUsername.innerText = 'user4';
           postCommentContent.innerText = commentInputText.value;
 
-          //TODO: ownerid should be logged in users id
-          uploadPostComment(post.post_id, 1, commentInputText.value);
-
           postCommentDiv.appendChild(postCommentUsername);
           postCommentDiv.appendChild(postCommentContent);
           postCommentsDiv.appendChild(postCommentDiv);
-        }
-        commentForm.appendChild(commentInputText);
-        commentForm.appendChild(commentSubmit);
-        newCommentBox.appendChild(commentForm);
-        postCommentsDiv.appendChild(newCommentBox);
+
+          e.preventDefault();
+          const data = serializeJson(commentForm);
+          const fetchOptions = {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(data),
+          };
+          const response = await fetch(url + '/post/' + 1 + '/comment/' + 1, fetchOptions);
+          return await response.json();
+        })
+
+        //TODO: Comment should be added to post_comment
+        // commentForm.onsubmit = () => {
+        //
+        //   const commentBox = document.getElementById('write-comment-box' + post.post_id);
+        //   commentBox.remove();
+        //
+        //   const postCommentDiv = document.createElement('div');
+        //   const postCommentUsername = document.createElement('p');
+        //   const postCommentContent = document.createElement('p');
+        //   postCommentDiv.id = 'post-comment';
+        //   postCommentUsername.id = 'post-comment-username';
+        //   postCommentContent.id = 'post-comment-content';
+        //   postCommentUsername.innerText = 'user4';
+        //   postCommentContent.innerText = commentInputText.value;
+        //
+        //   //TODO: ownerid should be logged in users id
+        //   uploadPostComment(post.post_id, 1, serializeJson(commentForm));
+        //
+        //   postCommentDiv.appendChild(postCommentUsername);
+        //   postCommentDiv.appendChild(postCommentContent);
+        //   postCommentsDiv.appendChild(postCommentDiv);
+        // }
       }
     });
 

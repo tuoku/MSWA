@@ -33,8 +33,8 @@ const post_vote_delete = async (req, res) => {
 }
 
 const post_comment_upload = async (req, res) => {
-  console.log('inside controller: '+req.body.comment);
-  const uploadComment = await postModel.uploadComment(req.params.postid, req.params.ownerid, req.body.comment);
+  console.log('inside controller: '+req.body.jsonComment);
+  const uploadComment = await postModel.uploadComment(req.params.postid, req.params.ownerid, req.body.jsonComment);
   res.json(uploadComment);
 }
 module.exports = {

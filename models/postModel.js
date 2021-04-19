@@ -138,10 +138,10 @@ const deleteVote = async (post_id, user_id) => {
 const uploadComment = async (post_id, user_id, comment) => {
   console.log('tried insert this into database: ' + comment)
   try{
-    const [row] = await promisePool.execute('INSERT INTO post_comment (post_id, owner_id, commentText, vst) VALUES (?, ?, ?, ?);',
-        [post_id, user_id, comment, dateTimeMaker()]);
+    // const [row] = await promisePool.execute('INSERT INTO post_comment (post_id, owner_id, commentText, vst) VALUES (?, ?, ?, ?);',
+    //     [post_id, user_id, comment, dateTimeMaker()]);
     console.log('postModel uploadComment insert: ', row);
-    return row;
+    // return row;
   }catch (e) {
     console.error('uploadComment:', e.message);
   }

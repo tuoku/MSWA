@@ -15,6 +15,6 @@ router.get('/comments/:id', postController.post_get_comments);
 router.post('/:postid/likeowner/:ownerid/like', postController.post_like);
 router.post('/:postid/likeowner/:ownerid/dislike', postController.post_dislike);
 router.delete('/:postid/likeowner/:ownerid/delete', postController.post_vote_delete);
-router.post('/:postid/comment/:ownerid', textParser, postController.post_comment_upload);
+router.post('/:postid/comment/:ownerid', jsonParser, postController.post_comment_upload);
 
 module.exports = router;
