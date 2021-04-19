@@ -49,6 +49,7 @@ nav {
     border: none;
     outline: none;
     background-color: transparent;
+    cursor: pointer;
 }
 
 #myProfileBtn {
@@ -60,6 +61,7 @@ nav {
     border: none;
     outline: none;
     background-color: transparent;
+    cursor: pointer;
 }
 
 #loginBtn {
@@ -89,7 +91,8 @@ nav {
     height: 100%;
     z-index: 999;
     background: rgba(1, 1, 1, 0.8);
-    position: absolute;
+    position: fixed;
+    top:0;
 }
 
 .form {
@@ -185,7 +188,6 @@ input {
 }
 
 .autocomplete-items div:hover {
-    /*when hovering an item:*/
     background-color: #e9e9e9;
 }
 .autocomplete-active {
@@ -198,4 +200,8 @@ input {
     height: 5vh;
     border-radius: 100%;
     margin-right: 10px;
+}
+
+.imgWithPlaceholder {
+    background: url('../IMG/placeholder.jpg') no-repeat scroll 0 0;
 }

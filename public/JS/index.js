@@ -1,5 +1,4 @@
 const loginButton = document.getElementById('loginBtn');
-const logoutButton = document.getElementById('logoutBtn')
 const registerModal = document.getElementById('registerModal');
 const loginModal = document.getElementById('loginModal');
 const modalClosers = document.getElementsByClassName('modalClose');
@@ -7,6 +6,9 @@ const registerForm = document.getElementById('registerForm');
 const loginForm = document.getElementById('loginForm');
 const bottomNav = document.getElementById('bottomNav');
 const searchBar = document.getElementById('headerSearch');
+const myProfileBtn = document.getElementById('myProfileBtn');
+const homeBtn = document.getElementById('homeBtn');
+
 // Array for storing users fetched during searchbar input
 let userSearchArray;
 
@@ -17,16 +19,17 @@ const url = 'http://localhost:3000'
 for(let m of modalClosers){
   m.addEventListener('click', e => {
     m.parentElement.classList.add('hidden')
+    document.body.style.overflow = 'scroll';
   })
 }
 
 // reveal the registration modal when clicking the login button
 loginButton.addEventListener('click', ev => {
   registerModal.classList.remove('hidden')
+  document.body.style.overflow = 'hidden';
 });
 
-logoutButton.addEventListener('click', async event => {
-  event.preventDefault();
+const logOut = async () => {
   try {
     // logging out requires token for authentication
     const options = {
@@ -43,14 +46,13 @@ logoutButton.addEventListener('click', async event => {
     // hide the bottomnav (contains actions for registered users)
     // and switch logout button back to login button
     bottomNav.classList.add('hidden');
-    logoutButton.classList.add('hidden');
     loginButton.classList.remove('hidden');
 
   }
   catch (e) {
     console.log(e.message);
   }
-})
+}
 
 registerForm.addEventListener('submit', async (event) => {
 event.preventDefault()
@@ -76,8 +78,8 @@ event.preventDefault()
     registerModal.classList.add('hidden');
     alert('Succesfully registered!')
     bottomNav.classList.remove('hidden');
-    logoutButton.classList.remove('hidden');
     loginButton.classList.add('hidden');
+    document.body.style.overflow = 'scroll';
   }
 });
 
@@ -103,8 +105,8 @@ loginForm.addEventListener('submit', async (event) => {
     // hide modal and show nav + logout
     loginModal.classList.add('hidden')
     bottomNav.classList.remove('hidden');
-    logoutButton.classList.remove('hidden');
     loginButton.classList.add('hidden');
+    document.body.style.overflow = 'scroll';
     alert('login success!')
   }
 })
@@ -140,18 +142,17 @@ searchBar.addEventListener('input', async ev => {
         let b = document.createElement("DIV");
         let imgSrc = url + '/uploads/profile/' + userSearchArray[i].id + '.jpg'
         // insert profile pic
-        b.innerHTML = "<img src='"+ imgSrc + "' class='suggestionImg'>"
+        b.innerHTML = "<img src='"+ imgSrc + "' class='suggestionImg imgWithPlaceholder'>"
         // make the matching letters bold:
         b.innerHTML += "<strong>" + userSearchArray[i].username.toString().substr(0, val.length) + "</strong>";
         b.innerHTML += userSearchArray[i].username.toString().substr(val.length);
         // insert a input field that will hold the current array item's value:
-        b.innerHTML += "<input type='hidden' value='" + userSearchArray[i] + "'>";
+        b.innerHTML += "<input type='hidden' value='" + userSearchArray[i].id + "'>";
         // execute a function when someone clicks on the item value (DIV element):
         b.addEventListener("click", (e) => {
-
-          // TODO: go to user profile when suggestion is clicked
-
-          closeAllLists();
+          //closeAllLists();
+          console.log(this)
+          window.location.href = 'profile.html?id=' + userSearchArray[i].id
         });
         a.appendChild(b);
       }
@@ -180,11 +181,27 @@ const logInsteadOfReg = () => {
   registerModal.classList.add('hidden')
   loginModal.classList.remove('hidden')
 }
+// parse token to json
+const parseJwt = (token) => {
+  try {
+    return JSON.parse(atob(token.split('.')[1]));
+  } catch (e) {
+    return null;
+  }
+};
+
+myProfileBtn.addEventListener('click', (ev => {
+  const user = parseJwt(sessionStorage.getItem('token'))
+  window.location.href = 'profile.html?id=' + user.id
+}))
+
+homeBtn.addEventListener('click', ev => {
+  window.location.href = 'index.html'
+})
 
 // when app starts, check if token exists ( = user is already logged in )
 // and show the bottomnav + logout button
 if (sessionStorage.getItem('token')) {
   bottomNav.classList.remove('hidden');
-  logoutButton.classList.remove('hidden');
   loginButton.classList.add('hidden');
 }

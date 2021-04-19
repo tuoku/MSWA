@@ -7,5 +7,6 @@ const userController = require('../controllers/userController');
 
 
 router.get('/letters/:chars', userController.findByChars)
+router.get('/:id', userController.getById)
 
 module.exports = router;

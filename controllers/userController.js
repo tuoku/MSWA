@@ -9,6 +9,14 @@ const findByChars = async (req, res) => {
   }
 }
 
+const getById = async (req, res) => {
+  let row = await userModel.getUser(req.params.id)
+  if (row){
+    res.json(row)
+  }
+}
+
 module.exports = {
   findByChars,
+  getById,
 };

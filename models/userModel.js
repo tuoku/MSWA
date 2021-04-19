@@ -2,10 +2,10 @@
 const pool = require('../database/db');
 const promisePool = pool.promise();
 
-// get a single user by the user id
+// get a single user (+ follower amount) by the user id
 const getUser = async (id) => {
   try{
-    const [row] = await promisePool.query(`SELECT * FROM user WHERE id = ${id}`);
+    const [row] = await promisePool.query(`SELECT user.*, COUNT(user_followed.follower_id) AS followers FROM user LEFT JOIN user_followed ON user.id = user_followed.follows_id WHERE id = ${id}`);
     return row;
   }catch (e) {
     console.error('error', e.message);
