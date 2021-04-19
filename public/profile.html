@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Title</title>
+    <title>Profile</title>
     <!-- reuse css from index for header + bottomNav -->
     <link rel="stylesheet" href="CSS/index.css">
     <link rel="stylesheet" href="CSS/profile.css">
@@ -14,26 +14,39 @@
     <header>
         <input type="text" placeholder="Search users" id="headerSearch">
         <button id="loginBtn"></button>
-        <button id="logoutBtn" class="hidden"></button>
+        <div id="menuItems">
+            <a href="#">item</a>
+            <a href="#">item</a>
+            <a href="#">item</a>
+        </div>
+        <!-- "Hamburger menu" / "Bar icon" to toggle the nav links -->
+        <div id="burger" onclick="toggleMenu()">
+            <div class="bar1"></div>
+            <div class="bar2"></div>
+            <div class="bar3"></div>
+        </div>
     </header>
     <div id="profileContent">
         <div id="profileInfo">
             <button id="followBtn">Follow</button>
             <figure>
                 <img src="https://st.depositphotos.com/1779253/5140/v/600/depositphotos_51405259-stock-illustration-male-avatar-profile-picture-use.jpg" id="profilePic">
-                <figcaption id="username">username</figcaption>
+                <figcaption id="username"></figcaption>
             </figure>
-            <p id="followerAmount">0 <br> followers</p>
+            <p id="followerAmount"> <br> followers</p>
         </div>
         <div id="profileBio">
-            <p>
-                lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum
+            <p id="bio">
+
             </p>
         </div>
         <div id="feedTitles">
-            <p> <strong>Artworks</strong> </p>
+            <p id="guestFeedTitle">Posts</p>
+            <button class="tabs" id="postsBtn">Posts</button>
+            <div id="vSeparator"></div>
+            <button class="tabs">Saved</button>
         </div>
-        <div id="feeds">
+        <div class="feeds" id="posts">
             <img src="https://payload.cargocollective.com/1/5/178997/14228511/prt_500x500_1613656847_2x.jpg" class="feedPic">
             <img src="https://payload.cargocollective.com/1/5/178997/14228511/prt_500x500_1613656847_2x.jpg" class="feedPic">
             <img src="https://payload.cargocollective.com/1/5/178997/14228511/prt_500x500_1613656847_2x.jpg" class="feedPic">
@@ -60,6 +73,12 @@
             <img src="https://payload.cargocollective.com/1/5/178997/14228511/prt_500x500_1613656847_2x.jpg" class="feedPic">
             <img src="https://payload.cargocollective.com/1/5/178997/14228511/prt_500x500_1613656847_2x.jpg" class="feedPic">
             <img src="https://payload.cargocollective.com/1/5/178997/14228511/prt_500x500_1613656847_2x.jpg" class="feedPic">
+        </div>
+        <div class="feeds" id="saved">
+            <img src="https://dynaimage.cdn.cnn.com/cnn/c_fill,g_auto,w_1200,h_675,ar_16:9/https%3A%2F%2Fcdn.cnn.com%2Fcnnnext%2Fdam%2Fassets%2F210312144710-01-little-alien-digital-artwork-restricted.jpg" class="feedPic">
+            <img src="https://dynaimage.cdn.cnn.com/cnn/c_fill,g_auto,w_1200,h_675,ar_16:9/https%3A%2F%2Fcdn.cnn.com%2Fcnnnext%2Fdam%2Fassets%2F210312144710-01-little-alien-digital-artwork-restricted.jpg" class="feedPic">
+            <img src="https://dynaimage.cdn.cnn.com/cnn/c_fill,g_auto,w_1200,h_675,ar_16:9/https%3A%2F%2Fcdn.cnn.com%2Fcnnnext%2Fdam%2Fassets%2F210312144710-01-little-alien-digital-artwork-restricted.jpg" class="feedPic">
+            <img src="https://dynaimage.cdn.cnn.com/cnn/c_fill,g_auto,w_1200,h_675,ar_16:9/https%3A%2F%2Fcdn.cnn.com%2Fcnnnext%2Fdam%2Fassets%2F210312144710-01-little-alien-digital-artwork-restricted.jpg" class="feedPic">
         </div>
     </div>
     <!-- bottom navigation bar, shown only to logged in users -->

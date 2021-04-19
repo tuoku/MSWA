@@ -1,5 +1,4 @@
 const loginButton = document.getElementById('loginBtn');
-const logoutButton = document.getElementById('logoutBtn')
 const registerModal = document.getElementById('registerModal');
 const loginModal = document.getElementById('loginModal');
 const modalClosers = document.getElementsByClassName('modalClose');
@@ -20,16 +19,17 @@ const url = 'http://localhost:3000'
 for(let m of modalClosers){
   m.addEventListener('click', e => {
     m.parentElement.classList.add('hidden')
+    document.body.style.overflow = 'scroll';
   })
 }
 
 // reveal the registration modal when clicking the login button
 loginButton.addEventListener('click', ev => {
   registerModal.classList.remove('hidden')
+  document.body.style.overflow = 'hidden';
 });
 
-logoutButton.addEventListener('click', async event => {
-  event.preventDefault();
+const logOut = async () => {
   try {
     // logging out requires token for authentication
     const options = {
@@ -46,14 +46,13 @@ logoutButton.addEventListener('click', async event => {
     // hide the bottomnav (contains actions for registered users)
     // and switch logout button back to login button
     bottomNav.classList.add('hidden');
-    logoutButton.classList.add('hidden');
     loginButton.classList.remove('hidden');
 
   }
   catch (e) {
     console.log(e.message);
   }
-})
+}
 
 registerForm.addEventListener('submit', async (event) => {
 event.preventDefault()
@@ -79,8 +78,8 @@ event.preventDefault()
     registerModal.classList.add('hidden');
     alert('Succesfully registered!')
     bottomNav.classList.remove('hidden');
-    logoutButton.classList.remove('hidden');
     loginButton.classList.add('hidden');
+    document.body.style.overflow = 'scroll';
   }
 });
 
@@ -106,8 +105,8 @@ loginForm.addEventListener('submit', async (event) => {
     // hide modal and show nav + logout
     loginModal.classList.add('hidden')
     bottomNav.classList.remove('hidden');
-    logoutButton.classList.remove('hidden');
     loginButton.classList.add('hidden');
+    document.body.style.overflow = 'scroll';
     alert('login success!')
   }
 })
@@ -143,7 +142,7 @@ searchBar.addEventListener('input', async ev => {
         let b = document.createElement("DIV");
         let imgSrc = url + '/uploads/profile/' + userSearchArray[i].id + '.jpg'
         // insert profile pic
-        b.innerHTML = "<img src='"+ imgSrc + "' class='suggestionImg'>"
+        b.innerHTML = "<img src='"+ imgSrc + "' class='suggestionImg imgWithPlaceholder'>"
         // make the matching letters bold:
         b.innerHTML += "<strong>" + userSearchArray[i].username.toString().substr(0, val.length) + "</strong>";
         b.innerHTML += userSearchArray[i].username.toString().substr(val.length);
@@ -182,7 +181,7 @@ const logInsteadOfReg = () => {
   registerModal.classList.add('hidden')
   loginModal.classList.remove('hidden')
 }
-
+// parse token to json
 const parseJwt = (token) => {
   try {
     return JSON.parse(atob(token.split('.')[1]));
@@ -204,6 +203,5 @@ homeBtn.addEventListener('click', ev => {
 // and show the bottomnav + logout button
 if (sessionStorage.getItem('token')) {
   bottomNav.classList.remove('hidden');
-  logoutButton.classList.remove('hidden');
   loginButton.classList.add('hidden');
 }

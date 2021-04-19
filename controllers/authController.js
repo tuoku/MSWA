@@ -21,6 +21,8 @@ const login = (req, res, next) => {
         res.send(err);
       }
       // if local auth was a success, return a token to be used for future auths
+      // !!!! Remove fields that may contain emojis as they may cause unparseable tokens !!!!!!
+      delete user.bioText;
       const token = jwt.sign(user, process.env.JWT_SECRET);
       return res.json({user, token});
     });
