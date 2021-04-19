@@ -13,24 +13,29 @@ const post_get_owner_username = async (req, res) => {
 }
 
 const post_get_comments = async (req,  res) => {
-  const postComments =await postModel.getPostComments(req.params.id);
+  const postComments = await postModel.getPostComments(req.params.id);
   res.json(postComments);
 }
 
 const post_like = async (req, res) => {
   const hasLiked = await postModel.givePostLike(req.params.postid, req.params.ownerid);
-  console.log('hasliked in controller: ' + hasLiked);
   res.json(hasLiked);
 }
 
 const post_dislike = async (req ,res) => {
   const hasDisliked = await postModel.givePostDislike(req.params.postid, req.params.ownerid);
-  console.log('hasdisliked in controller: ' + hasDisliked);
   res.json(hasDisliked);
 }
 
 const post_vote_delete = async (req, res) => {
-  await postModel.deleteVote(req.params.postid, req.params.ownerid);
+  const deleteOk = await postModel.deleteVote(req.params.postid, req.params.ownerid);
+  res.json(deleteOk);
+}
+
+const post_comment_upload = async (req, res) => {
+  console.log('inside controller: '+req.body.comment);
+  const uploadComment = await postModel.uploadComment(req.params.postid, req.params.ownerid, req.body.comment);
+  res.json(uploadComment);
 }
 module.exports = {
   posts_get,
@@ -39,4 +44,5 @@ module.exports = {
   post_like,
   post_dislike,
   post_vote_delete,
+  post_comment_upload,
 };
