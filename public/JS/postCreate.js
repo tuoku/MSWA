@@ -13,6 +13,7 @@ const getPosts = async () => {
   createPosts(posts);
 };
 
+//After database updation these need renewal
 const giveLike = async (postid, ownerid) => {
   const fetchOptions = {
     method: 'POST',
@@ -37,7 +38,7 @@ const deleteVote = async (postid, ownerid) => {
 }
 
 //Fetches post owners username using id
-const getPostOwner = async (id) => {
+const getUsername = async (id) => {
   const response = await fetch(url + '/post/owner/' + id);
   const postOwner = await response.json();
   return postOwner[0].username;
@@ -112,14 +113,14 @@ const createPosts = async (posts) => {
 
 //Mini profile picture top left corner of post
     const posterProfilePicture = document.createElement('img');
+    //TODO: Should be posters userpic at 32x32
     posterProfilePicture.src = 'http://placekitten.com/g/32/32';
     posterProfilePicture.alt = 'Profile picture of post owner';
     postUserPictureDiv.appendChild(posterProfilePicture);
 
 //Top username of poster
     const posterUsername = document.createElement('p');
-    //Here should be query to get username from owner_id
-    posterUsername.innerText = await getPostOwner(post.owner_id);
+    posterUsername.innerText = await getUsername(post.owner_id);
     postUserUsernameDiv.appendChild(posterUsername);
 
 //Top right settings icon/button
@@ -144,8 +145,6 @@ const createPosts = async (posts) => {
     showMoreLink.href = '#';
     showMoreLink.innerText = 'Show more';
 
-    // if()
-
     postCaptionDiv.appendChild(postCaption);
     postCaptionDiv.appendChild(showMoreLink);
 
@@ -169,17 +168,20 @@ const createPosts = async (posts) => {
     postOptionsDiv.appendChild(postDislikeButtonDiv);
     postOptionsDiv.appendChild(postCommentButtonDiv);
 
-
+//Fetch post comments
     const commentList = await getPostComment(post.post_id);
 
+    //Loop thru and create elements to insert comments
     for(const comment of commentList) {
       const postCommentDiv = document.createElement('div');
       const postCommentUsername = document.createElement('p');
       const postCommentContent = document.createElement('p');
+
       postCommentDiv.id = 'post-comment';
       postCommentUsername.id = 'post-comment-username';
       postCommentContent.id = 'post-comment-content';
-      postCommentUsername.innerText = await getPostOwner(comment.owner_id);
+
+      postCommentUsername.innerText = await getUsername(comment.owner_id);
       postCommentContent.innerText = comment.commentText;
       postCommentDiv.appendChild(postCommentUsername);
       postCommentDiv.appendChild(postCommentContent);
@@ -204,7 +206,9 @@ const createPosts = async (posts) => {
 
     main.appendChild(postBody);
 
+
     //Functionality
+    //TODO: clicking should go to profile page
     postUserUsernameDiv.addEventListener('click', () => {
       console.log('Username clicked at post number ' + post.post_id);
     });
@@ -265,7 +269,7 @@ const createPosts = async (posts) => {
         commentSubmit.value = 'Comment';
 
         commentInputText.id = 'commentInputText';
-        commentInputText.name = 'commentInput';
+        commentInputText.name = 'jsonComment';
         commentSubmit.id = 'commentSubmit';
 
         commentForm.appendChild(commentInputText);
@@ -273,6 +277,7 @@ const createPosts = async (posts) => {
         newCommentBox.appendChild(commentForm);
         postCommentsDiv.appendChild(newCommentBox);
 
+        //TODO: Sanitize input before sending it to model
         commentForm.addEventListener('submit', async (e) => {
           const commentBox = document.getElementById('write-comment-box' + post.post_id);
           commentBox.remove();
@@ -300,7 +305,12 @@ const createPosts = async (posts) => {
             body: JSON.stringify(data),
           };
           const response = await fetch(url + '/post/' + 1 + '/comment/' + 1, fetchOptions);
-          return await response.json();
+          await response;
+          if(response) {
+            console.log('comment was submitted');
+          }else{
+            console.log('something went wrong');
+          }
         })
 
         //TODO: Comment should be added to post_comment

@@ -2,6 +2,7 @@
 const pool = require('../database/db');
 const promisePool = pool.promise();
 
+//Method to create DATETIME that fits to database
 const dateTimeMaker = () => {
   let date_ob = new Date();
   let date = ("0" + date_ob.getDate()).slice(-2);
@@ -31,8 +32,6 @@ const getPostComments = async (id) => {
   }
 }
 
-// !await promisePool.query('SELECT * FROM post_like WHERE post_id = ? AND user_id = ? AND hasLiked = ?', [post_id, user_id, 1]);
-
 const givePostLike = async (post_id, user_id) => {
   try {
     console.log('post_id:' + post_id);
@@ -42,16 +41,7 @@ const givePostLike = async (post_id, user_id) => {
     const [rows] = await promisePool.query('SELECT * FROM post_like WHERE post_id = ? AND user_id = ?', [post_id, user_id])
     console.log(rows);
     if(rows.length === 0) {
-      console.log('rows were empty, inside if');
-      let date_ob = new Date();
-      let date = ("0" + date_ob.getDate()).slice(-2);
-      let month = ("0" + (date_ob.getMonth() + 1)).slice(-2);
-      let year = date_ob.getFullYear();
-      let hours = date_ob.getHours();
-      let minutes = date_ob.getMinutes();
-      let seconds = date_ob.getSeconds();
-      let datetime = (year + "-" + month + "-" + date + " " + hours + ":" + minutes + ":" + seconds);
-      const [rows] = await promisePool.execute('INSERT INTO post_like (post_id, user_id, hasLiked, vst) VALUES (?, ?, ?, ?)', [post_id, user_id, 1, datetime]);
+      const [rows] = await promisePool.execute('INSERT INTO post_like (post_id, user_id, hasLiked, vst) VALUES (?, ?, ?, ?)', [post_id, user_id, 1, dateTimeMaker()]);
       console.log('postModel givePostLike insert:' + rows);
       const [row] = await promisePool.execute('UPDATE user_post SET likesAmount = likesAmount + 1 WHERE post_id = ?', [post_id]);
       console.log('updated post likeAmount: '+ row);
@@ -72,16 +62,7 @@ const givePostDislike = async (post_id, user_id) => {
     const [rows] = await promisePool.query('SELECT * FROM post_like WHERE post_id = ? AND user_id = ?', [post_id, user_id])
     console.log(rows);
     if(rows.length === 0) {
-      console.log('rows were empty, inside if');
-      let date_ob = new Date();
-      let date = ("0" + date_ob.getDate()).slice(-2);
-      let month = ("0" + (date_ob.getMonth() + 1)).slice(-2);
-      let year = date_ob.getFullYear();
-      let hours = date_ob.getHours();
-      let minutes = date_ob.getMinutes();
-      let seconds = date_ob.getSeconds();
-      let datetime = (year + "-" + month + "-" + date + " " + hours + ":" + minutes + ":" + seconds);
-      const [rows] = await promisePool.execute('INSERT INTO post_like (post_id, user_id, hasDisliked, vst) VALUES (?, ?, ?, ?)', [post_id, user_id, 1, datetime]);
+      const [rows] = await promisePool.execute('INSERT INTO post_like (post_id, user_id, hasDisliked, vst) VALUES (?, ?, ?, ?)', [post_id, user_id, 1, dateTimeMaker()]);
       console.log('postModel givePostLike insert:' + rows);
       const [row] = await promisePool.execute('UPDATE user_post SET likesAmount = likesAmount - 1 WHERE post_id = ?', [post_id]);
       console.log('updated post likeAmount: '+ row);
@@ -136,14 +117,20 @@ const deleteVote = async (post_id, user_id) => {
   }
 }
 const uploadComment = async (post_id, user_id, comment) => {
-  console.log('tried insert this into database: ' + comment)
   try{
-    // const [row] = await promisePool.execute('INSERT INTO post_comment (post_id, owner_id, commentText, vst) VALUES (?, ?, ?, ?);',
-    //     [post_id, user_id, comment, dateTimeMaker()]);
+    console.log('comment json:' + comment);
+    const commentAsString = JSON.stringify(comment);
+    console.log('comment after stringify length:' + commentAsString.length);
+    if(commentAsString.length === 0) {
+      return false;
+    }
+    const [row] = await promisePool.execute('INSERT INTO post_comment (post_id, owner_id, commentText, vst) VALUES (?, ?, ?, ?);',
+        [post_id, user_id, comment, dateTimeMaker()]);
     console.log('postModel uploadComment insert: ', row);
-    // return row;
+    return true;
   }catch (e) {
     console.error('uploadComment:', e.message);
+    return false;
   }
 }
 

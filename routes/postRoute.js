@@ -10,7 +10,7 @@ const textParser = parser.text({limit: 255});
 const {body, sanitizeBody} = require('express-validator');
 
 router.get('/', postController.posts_get);
-router.get('/owner/:id', postController.post_get_owner_username);
+router.get('/owner/:id', postController.post_get_username);
 router.get('/comments/:id', postController.post_get_comments);
 router.post('/:postid/likeowner/:ownerid/like', postController.post_like);
 router.post('/:postid/likeowner/:ownerid/dislike', postController.post_dislike);

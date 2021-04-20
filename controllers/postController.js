@@ -7,7 +7,7 @@ const posts_get = async (req, res) => {
   const postList = await postModel.getAllPosts();
   res.json(postList);
 }
-const post_get_owner_username = async (req, res) => {
+const post_get_username = async (req, res) => {
   const postOwner = await userModel.getUser(req.params.id);
   res.json(postOwner);
 }
@@ -33,13 +33,12 @@ const post_vote_delete = async (req, res) => {
 }
 
 const post_comment_upload = async (req, res) => {
-  console.log('inside controller: '+req.body.jsonComment);
   const uploadComment = await postModel.uploadComment(req.params.postid, req.params.ownerid, req.body.jsonComment);
-  res.json(uploadComment);
+  res.send(uploadComment);
 }
 module.exports = {
   posts_get,
-  post_get_owner_username,
+  post_get_username,
   post_get_comments,
   post_like,
   post_dislike,
