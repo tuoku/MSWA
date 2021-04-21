@@ -13,53 +13,35 @@ const getPosts = async () => {
   createPosts(posts);
 };
 
-//After database updation these need renewal
-const giveLike = async (postid, ownerid) => {
+//Vote is like/dislike, 1/0 respectively
+const votePost = async (postid, voterid, vote) => {
   const fetchOptions = {
     method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: `{ "postid":"${postid}", "voterid":"${voterid}", "vote":"${vote}"}`,
   };
-  const response = await fetch(url + '/post/' + postid + '/likeowner/' + ownerid + '/like', fetchOptions);
+  const response = await fetch(url + '/post/vote', fetchOptions);
   return await response.json();
-}
+};
 
-const giveDislike = async (postid, ownerid) => {
-  const fetchOptions = {
-    method: 'POST',
-  };
-  const response = await fetch(url + '/post/' + postid + '/likeowner/' + ownerid + '/dislike', fetchOptions);
-  return await response.json();
-}
-
-const deleteVote = async (postid, ownerid) => {
-  const fetchOptions = {
-    method: 'DELETE',
-  };
-  await fetch(url + '/post/' + postid + '/likeowner/' + ownerid + '/delete', fetchOptions);
-}
+const getPostVoteCount = async (id) => {
+  const response = await fetch(url + '/post/' + id + '/votecount');
+  return response.json();
+};
 
 //Fetches post owners username using id
 const getUsername = async (id) => {
   const response = await fetch(url + '/post/owner/' + id);
   const postOwner = await response.json();
   return postOwner[0].username;
-}
+};
 
 const getPostComment = async (id) => {
   const response = await fetch(url + '/post/comments/' + id);
   return await response.json();
-}
-
-const uploadPostComment = async (postid, ownerid, comment) => {
-  const fetchOptions = {
-    method: 'POST',
-    body: JSON.stringify(comment),
-    headers: {
-      'Content-Type': 'application/json',
-    },
-  };
-  const response = await fetch(url + '/post/' + postid + '/comment/' + ownerid, fetchOptions);
-  return await response.json();
-}
+};
 
 getPosts();
 
@@ -150,7 +132,7 @@ const createPosts = async (posts) => {
 
 //Like amount
     const postLikes = document.createElement('p');
-    postLikes.innerText = post.likesAmount + ' likes';
+    postLikes.innerText = await getPostVoteCount(post.post_id) + ' likes';
     postLikesDiv.appendChild(postLikes);
 
 //Like, dislike and comment icons/buttons
@@ -172,7 +154,7 @@ const createPosts = async (posts) => {
     const commentList = await getPostComment(post.post_id);
 
     //Loop thru and create elements to insert comments
-    for(const comment of commentList) {
+    for (const comment of commentList) {
       const postCommentDiv = document.createElement('div');
       const postCommentUsername = document.createElement('p');
       const postCommentContent = document.createElement('p');
@@ -206,7 +188,6 @@ const createPosts = async (posts) => {
 
     main.appendChild(postBody);
 
-
     //Functionality
     //TODO: clicking should go to profile page
     postUserUsernameDiv.addEventListener('click', () => {
@@ -218,48 +199,47 @@ const createPosts = async (posts) => {
     });
 
     //after refresh can still like/dislike
-    postLikeButtonDiv.addEventListener('click', () => {
-      console.log('Like clicked at post number ' + post.post_id);
-
-      //TODO: ownerid should be logged in user
-      giveLike(post.post_id, 1).then( (response) => {
-        if(response) {
-          const likeBaseAmount = post.likesAmount;
-          postLikes.innerText = (likeBaseAmount+1).toString() + ' likes';
-        }else{
-          //TODO: ownerid should be logged in user
-          deleteVote(post.post_id, 1);
-          const likeBaseAmount = post.likesAmount;
-          postLikes.innerText = (likeBaseAmount).toString() + ' likes';
+    postLikeButtonDiv.addEventListener('click', async () => {
+      const startingValue = parseInt(postLikes.innerText);
+      //TODO: Voterid should be logged in user's
+      votePost(post.post_id, 28, 1).then((response) => {
+        console.log(response);
+        if (response === 1) {
+          postLikes.innerText = (startingValue + 1).toString() + ' likes';
+        }
+        if (response === 0) {
+          postLikes.innerText = (startingValue - 1).toString() + ' likes';
+        }
+        if (response === 2) {
+          postLikes.innerText = (startingValue + 2).toString() + ' likes';
         }
       });
     });
 
     postDislikeButtonDiv.addEventListener('click', () => {
-      console.log('Disike clicked at post number ' + post.post_id);
-      //TODO: ownerid should be logged in user
-      giveDislike(post.post_id, 1).then( (response) => {
-        if(response) {
-          const likeBaseAmount = post.likesAmount;
-          postLikes.innerText = (likeBaseAmount-1).toString() + ' likes';
-        }else{
-          //TODO: ownerid should be logged in user
-          deleteVote(post.post_id, 1);
-          const likeBaseAmount = post.likesAmount;
-          postLikes.innerText = (likeBaseAmount).toString() + ' likes';
+      //TODO: Voterid should be logged in user's
+      const startingValue = parseInt(postLikes.innerText);
+      votePost(post.post_id, 28, 0).then((response) => {
+        if (response === 1) {
+          postLikes.innerText = (startingValue - 1).toString() + ' likes';
+        }
+        if (response === 0) {
+          postLikes.innerText = (startingValue + 1).toString() + ' likes';
+        }
+        if (response === 2) {
+          postLikes.innerText = (startingValue - 2).toString() + ' likes';
         }
       });
     });
 
     postCommentButtonDiv.addEventListener('click', () => {
-
-      console.log('Comment clicked at post number ' + post.post_id);
-      if(document.getElementById('write-comment-box' + post.post_id)) {
+      //Toggleable commenting field
+      if (document.getElementById('write-comment-box' + post.post_id)) {
         const commentBox = document.getElementById('write-comment-box' + post.post_id);
         commentBox.remove();
-      }else {
+      } else {
         const newCommentBox = document.createElement('div');
-        newCommentBox.id = "write-comment-box" + post.post_id;
+        newCommentBox.id = 'write-comment-box' + post.post_id;
 
         const commentForm = document.createElement('FORM');
         const commentInputText = document.createElement('INPUT');
@@ -279,23 +259,11 @@ const createPosts = async (posts) => {
 
         //TODO: Sanitize input before sending it to model
         commentForm.addEventListener('submit', async (e) => {
+          e.preventDefault();
+
           const commentBox = document.getElementById('write-comment-box' + post.post_id);
           commentBox.remove();
 
-          const postCommentDiv = document.createElement('div');
-          const postCommentUsername = document.createElement('p');
-          const postCommentContent = document.createElement('p');
-          postCommentDiv.id = 'post-comment';
-          postCommentUsername.id = 'post-comment-username';
-          postCommentContent.id = 'post-comment-content';
-          postCommentUsername.innerText = 'user4';
-          postCommentContent.innerText = commentInputText.value;
-
-          postCommentDiv.appendChild(postCommentUsername);
-          postCommentDiv.appendChild(postCommentContent);
-          postCommentsDiv.appendChild(postCommentDiv);
-
-          e.preventDefault();
           const data = serializeJson(commentForm);
           const fetchOptions = {
             method: 'POST',
@@ -304,37 +272,30 @@ const createPosts = async (posts) => {
             },
             body: JSON.stringify(data),
           };
-          const response = await fetch(url + '/post/' + 1 + '/comment/' + 1, fetchOptions);
+          //TODO: 11 should be replaced with logged in user's ID
+          const response = await fetch(url + '/post/' + 1 + '/comment/' + 11, fetchOptions);
           await response;
-          if(response) {
+          if (response) {
             console.log('comment was submitted');
-          }else{
+
+            const postCommentDiv = document.createElement('div');
+            const postCommentUsername = document.createElement('p');
+            const postCommentContent = document.createElement('p');
+            postCommentDiv.id = 'post-comment';
+            postCommentUsername.id = 'post-comment-username';
+            postCommentContent.id = 'post-comment-content';
+
+            postCommentUsername.innerText = 'user4';
+
+            postCommentContent.innerText = commentInputText.value;
+
+            postCommentDiv.appendChild(postCommentUsername);
+            postCommentDiv.appendChild(postCommentContent);
+            postCommentsDiv.appendChild(postCommentDiv);
+          } else {
             console.log('something went wrong');
           }
-        })
-
-        //TODO: Comment should be added to post_comment
-        // commentForm.onsubmit = () => {
-        //
-        //   const commentBox = document.getElementById('write-comment-box' + post.post_id);
-        //   commentBox.remove();
-        //
-        //   const postCommentDiv = document.createElement('div');
-        //   const postCommentUsername = document.createElement('p');
-        //   const postCommentContent = document.createElement('p');
-        //   postCommentDiv.id = 'post-comment';
-        //   postCommentUsername.id = 'post-comment-username';
-        //   postCommentContent.id = 'post-comment-content';
-        //   postCommentUsername.innerText = 'user4';
-        //   postCommentContent.innerText = commentInputText.value;
-        //
-        //   //TODO: ownerid should be logged in users id
-        //   uploadPostComment(post.post_id, 1, serializeJson(commentForm));
-        //
-        //   postCommentDiv.appendChild(postCommentUsername);
-        //   postCommentDiv.appendChild(postCommentContent);
-        //   postCommentsDiv.appendChild(postCommentDiv);
-        // }
+        });
       }
     });
 
