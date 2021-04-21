@@ -1,10 +1,11 @@
 'use strict';
 
 const body = document.querySelector('body');
-const main = document.createElement('main');
+const main = document.querySelector('main');
+
 
 //url for local development, change on production server
-const url = 'http://localhost:3000';
+// const url = 'http://localhost:3000';
 
 //Fetches all posts from database and calls function to show them
 const getPosts = async () => {
@@ -12,6 +13,21 @@ const getPosts = async () => {
   const posts = await response.json();
   createPosts(posts);
 };
+
+getPosts().then( () => {
+  loggedInUser()
+});
+
+const loggedInUser = () => {
+  try{
+    const user = parseJwt(sessionStorage.getItem('token'));
+    console.log('loggedInUser: ' + user.id);
+    return user.id;
+  }catch (e) {
+    console.log('hasnt logged in')
+    return false;
+  }
+}
 
 //Vote is like/dislike, 1/0 respectively
 const votePost = async (postid, voterid, vote) => {
@@ -31,26 +47,32 @@ const getPostVoteCount = async (id) => {
   return response.json();
 };
 
-//Fetches post owners username using id
-const getUsername = async (id) => {
+const getUser = async (id) => {
   const response = await fetch(url + '/post/owner/' + id);
   const postOwner = await response.json();
-  return postOwner[0].username;
-};
+  return postOwner[0];
+}
 
 const getPostComment = async (id) => {
   const response = await fetch(url + '/post/comments/' + id);
   return await response.json();
 };
 
-getPosts();
+const parseJwt = (token) => {
+  try{
+    return JSON.parse(atob(token.split('.')[1]));
+  }catch (e) {
+    return null
+  }
+}
 
+//TODO: Couple of posts at a time not the whole database
 const createPosts = async (posts) => {
   for (const post of posts) {
     const postBody = document.createElement('article');
 
     //Header section of post
-    const postHeadDiv = document.createElement('header');
+    const postHeadDiv = document.createElement('div');
     const postUserInfoDiv = document.createElement('div');
     const postUserPictureDiv = document.createElement('div');
     const postUserUsernameDiv = document.createElement('div');
@@ -95,14 +117,17 @@ const createPosts = async (posts) => {
 
 //Mini profile picture top left corner of post
     const posterProfilePicture = document.createElement('img');
-    //TODO: Should be posters userpic at 32x32
-    posterProfilePicture.src = 'http://placekitten.com/g/32/32';
+    const profilePicFolder = './IMG/';
+    const profilePic = (await getUser(post.owner_id)).profileFilename
+    posterProfilePicture.src = profilePicFolder + profilePic + '.jpg';
     posterProfilePicture.alt = 'Profile picture of post owner';
+    posterProfilePicture.width = '32';
+    posterProfilePicture.height = '32';
     postUserPictureDiv.appendChild(posterProfilePicture);
 
 //Top username of poster
     const posterUsername = document.createElement('p');
-    posterUsername.innerText = await getUsername(post.owner_id);
+    posterUsername.innerText = (await getUser(post.owner_id)).username;
     postUserUsernameDiv.appendChild(posterUsername);
 
 //Top right settings icon/button
@@ -163,7 +188,7 @@ const createPosts = async (posts) => {
       postCommentUsername.id = 'post-comment-username';
       postCommentContent.id = 'post-comment-content';
 
-      postCommentUsername.innerText = await getUsername(comment.owner_id);
+      postCommentUsername.innerText = (await getUser(comment.owner_id)).username;
       postCommentContent.innerText = comment.commentText;
       postCommentDiv.appendChild(postCommentUsername);
       postCommentDiv.appendChild(postCommentContent);
@@ -199,104 +224,121 @@ const createPosts = async (posts) => {
     });
 
     //after refresh can still like/dislike
-    postLikeButtonDiv.addEventListener('click', async () => {
-      const startingValue = parseInt(postLikes.innerText);
-      //TODO: Voterid should be logged in user's
-      votePost(post.post_id, 28, 1).then((response) => {
-        console.log(response);
-        if (response === 1) {
-          postLikes.innerText = (startingValue + 1).toString() + ' likes';
-        }
-        if (response === 0) {
-          postLikes.innerText = (startingValue - 1).toString() + ' likes';
-        }
-        if (response === 2) {
-          postLikes.innerText = (startingValue + 2).toString() + ' likes';
-        }
-      });
+    postLikeButtonDiv.addEventListener('click',  () => {
+      if(loggedInUser()) {
+        const startingValue = parseInt(postLikes.innerText);
+        //TODO: Voterid should be logged in user's
+        votePost(post.post_id, loggedInUser(), 1).then((response) => {
+          if (response === 1) {
+            postLikes.innerText = (startingValue + 1).toString() + ' likes';
+          }
+          if (response === 0) {
+            postLikes.innerText = (startingValue - 1).toString() + ' likes';
+          }
+          if (response === 2) {
+            postLikes.innerText = (startingValue + 2).toString() + ' likes';
+          }
+        });
+      }else{
+        alert('You have to be logged in to like');
+      }
     });
 
     postDislikeButtonDiv.addEventListener('click', () => {
-      //TODO: Voterid should be logged in user's
-      const startingValue = parseInt(postLikes.innerText);
-      votePost(post.post_id, 28, 0).then((response) => {
-        if (response === 1) {
-          postLikes.innerText = (startingValue - 1).toString() + ' likes';
-        }
-        if (response === 0) {
-          postLikes.innerText = (startingValue + 1).toString() + ' likes';
-        }
-        if (response === 2) {
-          postLikes.innerText = (startingValue - 2).toString() + ' likes';
-        }
-      });
+      if(loggedInUser()) {
+        //TODO: Voterid should be logged in user's
+        const startingValue = parseInt(postLikes.innerText);
+        votePost(post.post_id, loggedInUser(), 0).then((response) => {
+          if (response === 1) {
+            postLikes.innerText = (startingValue - 1).toString() + ' likes';
+          }
+          if (response === 0) {
+            postLikes.innerText = (startingValue + 1).toString() + ' likes';
+          }
+          if (response === 2) {
+            postLikes.innerText = (startingValue - 2).toString() + ' likes';
+          }
+        });
+      }else{
+        alert('You have to be logged in to dislike');
+      }
     });
 
     postCommentButtonDiv.addEventListener('click', () => {
-      //Toggleable commenting field
-      if (document.getElementById('write-comment-box' + post.post_id)) {
-        const commentBox = document.getElementById('write-comment-box' + post.post_id);
-        commentBox.remove();
-      } else {
-        const newCommentBox = document.createElement('div');
-        newCommentBox.id = 'write-comment-box' + post.post_id;
-
-        const commentForm = document.createElement('FORM');
-        const commentInputText = document.createElement('INPUT');
-        const commentSubmit = document.createElement('INPUT');
-        commentInputText.setAttribute('type', 'text');
-        commentSubmit.setAttribute('type', 'submit');
-        commentSubmit.value = 'Comment';
-
-        commentInputText.id = 'commentInputText';
-        commentInputText.name = 'jsonComment';
-        commentSubmit.id = 'commentSubmit';
-
-        commentForm.appendChild(commentInputText);
-        commentForm.appendChild(commentSubmit);
-        newCommentBox.appendChild(commentForm);
-        postCommentsDiv.appendChild(newCommentBox);
-
-        //TODO: Sanitize input before sending it to model
-        commentForm.addEventListener('submit', async (e) => {
-          e.preventDefault();
-
+      if(loggedInUser()) {
+        //Toggleable commenting field
+        if (document.getElementById('write-comment-box' + post.post_id)) {
           const commentBox = document.getElementById('write-comment-box' + post.post_id);
           commentBox.remove();
+        } else {
+          const newCommentBox = document.createElement('div');
+          newCommentBox.id = 'write-comment-box' + post.post_id;
 
-          const data = serializeJson(commentForm);
-          const fetchOptions = {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/json',
-            },
-            body: JSON.stringify(data),
-          };
-          //TODO: 11 should be replaced with logged in user's ID
-          const response = await fetch(url + '/post/' + 1 + '/comment/' + 11, fetchOptions);
-          await response;
-          if (response) {
-            console.log('comment was submitted');
+          const commentForm = document.createElement('FORM');
+          const commentInputText = document.createElement('INPUT');
+          const commentSubmit = document.createElement('INPUT');
+          commentInputText.setAttribute('type', 'text');
+          commentSubmit.setAttribute('type', 'submit');
+          commentSubmit.value = 'Comment';
 
-            const postCommentDiv = document.createElement('div');
-            const postCommentUsername = document.createElement('p');
-            const postCommentContent = document.createElement('p');
-            postCommentDiv.id = 'post-comment';
-            postCommentUsername.id = 'post-comment-username';
-            postCommentContent.id = 'post-comment-content';
+          commentInputText.id = 'commentInputText';
+          commentInputText.name = 'jsonComment';
+          commentSubmit.id = 'commentSubmit';
 
-            postCommentUsername.innerText = 'user4';
+          commentForm.appendChild(commentInputText);
+          commentForm.appendChild(commentSubmit);
+          newCommentBox.appendChild(commentForm);
+          postCommentsDiv.appendChild(newCommentBox);
 
-            postCommentContent.innerText = commentInputText.value;
+          //TODO: Sanitize input before sending it to model
+          commentForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
 
-            postCommentDiv.appendChild(postCommentUsername);
-            postCommentDiv.appendChild(postCommentContent);
-            postCommentsDiv.appendChild(postCommentDiv);
-          } else {
-            console.log('something went wrong');
-          }
-        });
+            if(commentInputText.value.length > 0) {
+              const commentBox = document.getElementById('write-comment-box' + post.post_id);
+              commentBox.remove();
+
+              const data = serializeJson(commentForm);
+              const fetchOptions = {
+                method: 'POST',
+                headers: {
+                  'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(data),
+              };
+              const response = await fetch(url + '/post/' + 1 + '/comment/' + loggedInUser(), fetchOptions);
+              await response;
+              console.dir(response);
+              if (response) {
+                console.log('comment was submitted');
+
+                const postCommentDiv = document.createElement('div');
+                const postCommentUsername = document.createElement('p');
+                const postCommentContent = document.createElement('p');
+                postCommentDiv.id = 'post-comment';
+                postCommentUsername.id = 'post-comment-username';
+                postCommentContent.id = 'post-comment-content';
+
+                console.dir(await getUser(loggedInUser()).username);
+                postCommentUsername.innerText = (await getUser(loggedInUser())).username;
+
+                postCommentContent.innerText = commentInputText.value;
+
+                postCommentDiv.appendChild(postCommentUsername);
+                postCommentDiv.appendChild(postCommentContent);
+                postCommentsDiv.appendChild(postCommentDiv);
+              } else {
+                console.log('something went wrong');
+              }
+            }else{
+              alert('Comment something, bruh comeon');
+            }
+          });
+        }
+      }else{
+        alert('You have to be logged in to comment');
       }
+
     });
 
     //TODO: Show more should be visible only when caption make newline (help: https://stackoverflow.com/questions/783899/how-can-i-count-text-lines-inside-an-dom-element-can-i)
@@ -313,7 +355,7 @@ const createPosts = async (posts) => {
   }
 };
 
-body.appendChild(main);
+// body.appendChild(main);
 
 
 
