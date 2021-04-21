@@ -1,17 +1,11 @@
-body {
-    font-family: 'Poppins', sans-serif;
-    width: 100%;
-    margin-left: 0;
-    display: flex;
-    justify-content: center;
-}
 .post {
     display: flex;
     flex-wrap: wrap;
     width: 500px;
     min-width: 500px;
-    background-color: lightgray;
+    background-color: #ffffff;
     margin-bottom: 15px;
+    box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2);
 }
 .post-head {
     display: flex;
@@ -118,14 +112,11 @@ body {
     width: 100%;
 }
 
-/*#write-comment-box* {
-    width: 100%;
-}*/
 #commentInputText {
-    width: 45%;
+    width: 65%;
 }
 #commentSubmit {
-    width: 15%;
+    width: 20%;
 }
 
 @media only screen and (max-width: 499px) {
