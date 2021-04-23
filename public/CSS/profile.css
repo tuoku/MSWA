@@ -4,6 +4,7 @@ body {
     scrollbar-width: none;
     font-family: 'Poppins', sans-serif;
     overflow:scroll;
+    display:block;
 
 }
 body::-webkit-scrollbar{
