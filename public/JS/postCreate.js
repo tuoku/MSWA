@@ -60,13 +60,6 @@ const getPostComment = async (id) => {
   return await response.json();
 };
 
-const parseJwt = (token) => {
-  try{
-    return JSON.parse(atob(token.split('.')[1]));
-  }catch (e) {
-    return null
-  }
-}
 
 //TODO: Couple of posts at a time not the whole database
 const createPosts = async (posts) => {
