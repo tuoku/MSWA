@@ -222,7 +222,6 @@ const createPosts = async (posts) => {
     postLikeButtonDiv.addEventListener('click',  () => {
       if(loggedInUser()) {
         const startingValue = parseInt(postLikes.innerText);
-        //TODO: Voterid should be logged in user's
         votePost(post.post_id, loggedInUser(), 1).then((response) => {
           if (response === 1) {
             postLikes.innerText = (startingValue + 1).toString() + ' likes';
@@ -241,7 +240,6 @@ const createPosts = async (posts) => {
 
     postDislikeButtonDiv.addEventListener('click', () => {
       if(loggedInUser()) {
-        //TODO: Voterid should be logged in user's
         const startingValue = parseInt(postLikes.innerText);
         votePost(post.post_id, loggedInUser(), 0).then((response) => {
           if (response === 1) {
@@ -307,7 +305,6 @@ const createPosts = async (posts) => {
               console.dir(response);
               if (response) {
                 console.log('comment was submitted');
-
                 const postCommentDiv = document.createElement('div');
                 const postCommentUsername = document.createElement('p');
                 const postCommentContent = document.createElement('p');
