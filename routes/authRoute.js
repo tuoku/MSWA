@@ -3,7 +3,6 @@ const express = require('express');
 const router = express.Router();
 const authController = require('../controllers/authController');
 const parser = require('body-parser');
-const urlencodedParser = parser.urlencoded({extended: false});
 const jsonParser = parser.json()
 const {body, sanitizeBody} = require('express-validator');
 const passport = require('../utils/pass')
