@@ -35,6 +35,7 @@ main {
     width: 500px;
     display: block;
     margin-left: 0;
+    margin-bottom: 15vh;
 }
 
 #addPostBtn {

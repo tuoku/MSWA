@@ -35,7 +35,9 @@ const votePost = async (postid, voterid, vote) => {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
+      'Authorization': 'Bearer ' + sessionStorage.getItem('token'),
     },
+
     body: `{ "postid":"${postid}", "voterid":"${voterid}", "vote":"${vote}"}`,
   };
   const response = await fetch(url + '/post/vote', fetchOptions);
@@ -303,6 +305,7 @@ const createPosts = async (posts) => {
                 method: 'POST',
                 headers: {
                   'Content-Type': 'application/json',
+                  'Authorization': 'Bearer ' + sessionStorage.getItem('token'),
                 },
                 body: JSON.stringify(data),
               };
