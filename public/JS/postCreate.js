@@ -121,7 +121,8 @@ const createPosts = async (posts) => {
     postUserPictureDiv.appendChild(posterProfilePicture);
 
 //Top username of poster
-    const posterUsername = document.createElement('p');
+    const posterUsername = document.createElement('a');
+    posterUsername.href = 'profile.html?id=' + post.owner_id;
     posterUsername.innerText = (await getUser(post.owner_id)).username;
     postUserUsernameDiv.appendChild(posterUsername);
 
@@ -139,13 +140,12 @@ const createPosts = async (posts) => {
 //Caption
     //Caption text
     const postCaption = document.createElement('p');
-    postCaption.className = 'hideCaption';
+    postCaption.className = 'hide-caption';
     postCaption.innerText = post.caption;
 
     //This creates Show more "button"
     const showMoreLink = document.createElement('a');
     showMoreLink.id = 'showmore'+ post.post_id;
-    showMoreLink.href = '#';
     showMoreLink.innerText = 'Show more';
 
     postCaptionDiv.appendChild(postCaption);
@@ -163,6 +163,7 @@ const createPosts = async (posts) => {
     postLikeButton.src = './ICONS/arrowup_icon.png';
     postDislikeButton.src = './ICONS/arrowdown_icon.png';
     postCommentButton.src = './ICONS/comment_icon.png';
+
     postLikeButtonDiv.appendChild(postLikeButton);
     postDislikeButtonDiv.appendChild(postDislikeButton);
     postCommentButtonDiv.appendChild(postCommentButton);
@@ -177,9 +178,10 @@ const createPosts = async (posts) => {
     //Loop thru and create elements to insert comments
     for (const comment of commentList) {
       const postCommentDiv = document.createElement('div');
-      const postCommentUsername = document.createElement('p');
+      const postCommentUsername = document.createElement('a');
       const postCommentContent = document.createElement('p');
 
+      postCommentUsername.href = 'profile.html?id=' + comment.owner_id;
       postCommentDiv.id = 'post-comment';
       postCommentUsername.id = 'post-comment-username';
       postCommentContent.id = 'post-comment-content';
@@ -214,10 +216,9 @@ const createPosts = async (posts) => {
       document.getElementById('showmore' + post.post_id).style.display = 'none';
     }
 
-    //Functionality
-    //TODO: clicking should go to profile page
+      //Functionality
     postUserUsernameDiv.addEventListener('click', () => {
-      console.log('Username clicked at post number ' + post.post_id);
+      window.location.href = 'profile.html?id=' + post.owner_id
     });
 
     postSettingsDiv.addEventListener('click', () => {
@@ -280,9 +281,9 @@ const createPosts = async (posts) => {
           commentSubmit.setAttribute('type', 'submit');
           commentSubmit.value = 'Comment';
 
-          commentInputText.id = 'commentInputText';
+          commentInputText.id = 'comment-input-text';
           commentInputText.name = 'jsonComment';
-          commentSubmit.id = 'commentSubmit';
+          commentSubmit.id = 'comment-submit';
 
           commentForm.appendChild(commentInputText);
           commentForm.appendChild(commentSubmit);
@@ -343,10 +344,10 @@ const createPosts = async (posts) => {
     showMoreLink.addEventListener('click', () => {
       if (showMoreLink.innerText === 'Show more') {
         showMoreLink.innerText = 'Show less';
-        postCaption.className = 'showCaption';
+        postCaption.className = 'show-caption';
       } else {
         showMoreLink.innerText = 'Show more';
-        postCaption.className = 'hideCaption';
+        postCaption.className = 'hide-caption';
       }
     });
   }
