@@ -144,6 +144,7 @@ const createPosts = async (posts) => {
 
     //This creates Show more "button"
     const showMoreLink = document.createElement('a');
+    showMoreLink.id = 'showmore'+ post.post_id;
     showMoreLink.href = '#';
     showMoreLink.innerText = 'Show more';
 
@@ -207,6 +208,11 @@ const createPosts = async (posts) => {
     postBody.appendChild(postEndDiv);
 
     main.appendChild(postBody);
+
+    //Hides show more if caption isnt long enough to overflow
+    if(postCaption.scrollWidth <= postCaption.clientWidth) {
+      document.getElementById('showmore' + post.post_id).style.display = 'none';
+    }
 
     //Functionality
     //TODO: clicking should go to profile page
@@ -331,10 +337,8 @@ const createPosts = async (posts) => {
       }else{
         alert('You have to be logged in to comment');
       }
-
     });
 
-    //TODO: Show more should be visible only when caption make newline (help: https://stackoverflow.com/questions/783899/how-can-i-count-text-lines-inside-an-dom-element-can-i)
     //Show more "Button"
     showMoreLink.addEventListener('click', () => {
       if (showMoreLink.innerText === 'Show more') {
