@@ -144,6 +144,7 @@ const createPosts = async (posts) => {
 
     //This creates Show more "button"
     const showMoreLink = document.createElement('a');
+    showMoreLink.id = 'showmore'+ post.post_id;
     showMoreLink.href = '#';
     showMoreLink.innerText = 'Show more';
 
@@ -208,6 +209,11 @@ const createPosts = async (posts) => {
 
     main.appendChild(postBody);
 
+    //Hides show more if caption isnt long enough to overflow
+    if(postCaption.scrollWidth <= postCaption.clientWidth) {
+      document.getElementById('showmore' + post.post_id).style.display = 'none';
+    }
+
     //Functionality
     //TODO: clicking should go to profile page
     postUserUsernameDiv.addEventListener('click', () => {
@@ -222,7 +228,6 @@ const createPosts = async (posts) => {
     postLikeButtonDiv.addEventListener('click',  () => {
       if(loggedInUser()) {
         const startingValue = parseInt(postLikes.innerText);
-        //TODO: Voterid should be logged in user's
         votePost(post.post_id, loggedInUser(), 1).then((response) => {
           if (response === 1) {
             postLikes.innerText = (startingValue + 1).toString() + ' likes';
@@ -241,7 +246,6 @@ const createPosts = async (posts) => {
 
     postDislikeButtonDiv.addEventListener('click', () => {
       if(loggedInUser()) {
-        //TODO: Voterid should be logged in user's
         const startingValue = parseInt(postLikes.innerText);
         votePost(post.post_id, loggedInUser(), 0).then((response) => {
           if (response === 1) {
@@ -307,7 +311,6 @@ const createPosts = async (posts) => {
               console.dir(response);
               if (response) {
                 console.log('comment was submitted');
-
                 const postCommentDiv = document.createElement('div');
                 const postCommentUsername = document.createElement('p');
                 const postCommentContent = document.createElement('p');
@@ -334,10 +337,8 @@ const createPosts = async (posts) => {
       }else{
         alert('You have to be logged in to comment');
       }
-
     });
 
-    //TODO: Show more should be visible only when caption make newline (help: https://stackoverflow.com/questions/783899/how-can-i-count-text-lines-inside-an-dom-element-can-i)
     //Show more "Button"
     showMoreLink.addEventListener('click', () => {
       if (showMoreLink.innerText === 'Show more') {
