@@ -60,6 +60,30 @@ const getPostComment = async (id) => {
   return await response.json();
 };
 
+const openSettings = (id) => {
+  const settingsModal = document.createElement('div');
+  settingsModal.className = 'modal';
+  const modalClose = document.createElement('button');
+  modalClose.className = 'modalClose';
+  modalClose.innerText = 'x';
+
+  modalClose.addEventListener( 'click', () => {
+    settingsModal.classList.toggle('hidden');
+  })
+
+  const buttonContainer = document.createElement('div');
+  buttonContainer.className = 'modal-container';
+
+  const reportButton = document.createElement('button');
+  reportButton.innerText = 'gank this post';
+
+  buttonContainer.appendChild(reportButton);
+
+  settingsModal.appendChild(modalClose);
+  settingsModal.appendChild(buttonContainer);
+  body.appendChild(settingsModal);
+}
+
 
 //TODO: Couple of posts at a time not the whole database
 const createPosts = async (posts) => {
@@ -127,6 +151,36 @@ const createPosts = async (posts) => {
     postUserUsernameDiv.appendChild(posterUsername);
 
 //Top right settings icon/button
+//     <div id="registerModal" class="modal hidden">
+//       <button class="modalClose">x</button>
+//       <div class="form">
+//         Register
+//         <form id="registerForm">
+//           <input type="text" name="username" placeholder="username">
+//             <input type="email" name="email" placeholder="example@example.com">
+//               <input type="password" name="password" placeholder="password">
+//                 <button class="submitBtn">Register</button>
+//         </form>
+//         <br> Already a member? <br>
+//           <a href="javascript:logInsteadOfReg()">Log in</a>
+//       </div>
+//     </div>
+
+    // const settingsModal = document.createElement('div');
+    // settingsModal.className = 'modal hidden';
+    // const modalClose = document.createElement('button');
+    // modalClose.className = 'modalClose';
+    // const buttonContainer = document.createElement('div');
+    // buttonContainer.className = 'modal-container';
+    //
+    // const reportButton = document.createElement('button');
+    // reportButton.innerText = 'gank this post';
+    //
+    // buttonContainer.appendChild(reportButton);
+    //
+    // settingsModal.appendChild(modalClose);
+    // settingsModal.appendChild(buttonContainer);
+
     const postSettingsIcon = document.createElement('img');
     postSettingsIcon.src = './ICONS/settings_icon.png';
     postSettingsDiv.appendChild(postSettingsIcon);
@@ -223,6 +277,8 @@ const createPosts = async (posts) => {
 
     postSettingsDiv.addEventListener('click', () => {
       console.log('Settings clicked at post number ' + post.post_id);
+
+      openSettings(post.post_id);
     });
 
     //after refresh can still like/dislike
