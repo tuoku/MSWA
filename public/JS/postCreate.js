@@ -69,13 +69,33 @@ const openSettings = (id) => {
 
   modalClose.addEventListener( 'click', () => {
     settingsModal.classList.toggle('hidden');
-  })
+    settingsModal.remove();
+  });
 
   const buttonContainer = document.createElement('div');
   buttonContainer.className = 'modal-container';
 
   const reportButton = document.createElement('button');
-  reportButton.innerText = 'gank this post';
+  reportButton.className = 'setting-modal-button';
+  reportButton.innerText = 'Report';
+
+  reportButton.addEventListener('click', () => {
+    console.log('post reported id: ' + id);
+    buttonContainer.innerHTML = '';
+    const reportReason = ['bruh', 'gank'];
+    for(const reason of reportReason) {
+      console.log(reason)
+      const button = document.createElement('button');
+      button.className = 'setting-modal-button';
+      button.innerText = reason;
+      button.addEventListener('click', () => {
+        console.log('report reason: ' + reason);
+        buttonContainer.innerHTML = '';
+        buttonContainer.innerText = 'thanks for reporting';
+      });
+      buttonContainer.appendChild(button);
+    }
+  });
 
   buttonContainer.appendChild(reportButton);
 

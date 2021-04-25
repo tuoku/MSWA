@@ -155,16 +155,25 @@ a:hover {
 /* MODAL */
 
 .modal-container {
-    height: 50vh;
-    width: 15vw;
-    position: fixed;
+    display: flex;
+    flex-direction: column;
+    height: 30vh;
+    width: 320px;
+    margin-top: -160px;
+    margin-left: -160px;
+    position: relative;
     background-color: white;
-    top: 15vh;
-    left: 42vw;
-    text-align: center;
+    top: 50%;
+    left: 50%;
+    align-items: center;
     font-family: 'Poppins', sans-serif;
     border-radius: 10px;
     padding-top: 20px;
+}
+
+.setting-modal-button {
+    width: 100%;
+
 }
 
 @media only screen and (max-width: 499px) {
