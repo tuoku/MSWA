@@ -3,6 +3,59 @@
 const body = document.querySelector('body');
 const main = document.querySelector('main');
 
+const userCreatePost = document.getElementById('addPostBtn');
+userCreatePost.addEventListener('click', (id) => {
+  console.log('create clicked');
+
+  const createPostModal = document.createElement('div');
+  createPostModal.className = 'modal';
+  const modalClose = document.createElement('button');
+  modalClose.className = 'modalClose';
+  modalClose.innerText = 'x';
+
+  modalClose.addEventListener('click', () => {
+    createPostModal.classList.toggle('hidden');
+    createPostModal.remove();
+  });
+
+  const postCreateContainer = document.createElement('div');
+  postCreateContainer.className = 'modal-container';
+  postCreateContainer.id = 'post-create-container';
+  const form = document.createElement('FORM');
+  form.id = 'post-create-form';
+  const contentInput = document.createElement('INPUT')
+  contentInput.setAttribute('type', 'file');
+  contentInput.setAttribute('accept', 'image/*');
+  contentInput.setAttribute('placeholder', 'Choose File');
+  contentInput.required = true;
+  const captionInput = document.createElement('INPUT');
+  captionInput.setAttribute('type', 'text');
+  captionInput.setAttribute('placeholder', 'Caption');
+  const tagInput = document.createElement('INPUT');
+  tagInput.setAttribute('type', 'text');
+  tagInput.setAttribute('placeholder', 'Tags');
+  const postCreateSubmit = document.createElement('INPUT');
+  postCreateSubmit.setAttribute('type', 'submit');
+
+
+  form.appendChild(contentInput);
+  form.appendChild(captionInput);
+  form.appendChild(tagInput);
+  form.appendChild(postCreateSubmit);
+
+  form.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    console.log('submitted');
+  });
+
+  postCreateContainer.appendChild(form);
+
+  createPostModal.appendChild(modalClose);
+  createPostModal.appendChild(postCreateContainer);
+  body.appendChild(createPostModal);
+
+});
+
 
 //url for local development, change on production server
 // const url = 'http://localhost:3000';
@@ -59,6 +112,63 @@ const getPostComment = async (id) => {
   const response = await fetch(url + '/post/comments/' + id);
   return await response.json();
 };
+
+const openSettings = async (id) => {
+  const settingsModal = document.createElement('div');
+  settingsModal.className = 'modal';
+  const modalClose = document.createElement('button');
+  modalClose.className = 'modalClose';
+  modalClose.innerText = 'x';
+
+  modalClose.addEventListener('click', () => {
+    settingsModal.classList.toggle('hidden');
+    settingsModal.remove();
+  });
+
+  const buttonContainer = document.createElement('div');
+  buttonContainer.className = 'modal-container';
+
+  const reportButton = document.createElement('button');
+  reportButton.className = 'setting-modal-button';
+  reportButton.innerText = 'Report';
+
+  reportButton.addEventListener('click', () => {
+    console.log('post reported id: ' + id);
+    buttonContainer.innerHTML = '';
+    const reportReason = ['bruh', 'gank'];
+    for (const reason of reportReason) {
+      console.log(reason)
+      const button = document.createElement('button');
+      button.className = 'setting-modal-button';
+      button.innerText = reason;
+      button.addEventListener('click', () => {
+        console.log('report reason: ' + reason);
+        buttonContainer.innerHTML = '';
+        buttonContainer.innerText = 'thanks for reporting';
+      });
+      buttonContainer.appendChild(button);
+    }
+  });
+
+  if (loggedInUser()) {
+    const user = await getUser(loggedInUser());
+    if(user.isAdmin.data[0] === 1) {
+      console.log('user is admin');
+      const removeButton = document.createElement('button');
+      removeButton.className = 'setting-modal-button';
+      removeButton.id = 'remove-button';
+      removeButton.innerText = 'Remove';
+      //TODO: To model and checks in model
+      buttonContainer.appendChild(removeButton);
+    }
+  }
+
+  buttonContainer.appendChild(reportButton);
+
+  settingsModal.appendChild(modalClose);
+  settingsModal.appendChild(buttonContainer);
+  body.appendChild(settingsModal);
+}
 
 
 //TODO: Couple of posts at a time not the whole database
@@ -223,6 +333,8 @@ const createPosts = async (posts) => {
 
     postSettingsDiv.addEventListener('click', () => {
       console.log('Settings clicked at post number ' + post.post_id);
+
+      openSettings(post.post_id);
     });
 
     //after refresh can still like/dislike
