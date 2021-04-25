@@ -60,14 +60,14 @@ const getPostComment = async (id) => {
   return await response.json();
 };
 
-const openSettings = (id) => {
+const openSettings = async (id) => {
   const settingsModal = document.createElement('div');
   settingsModal.className = 'modal';
   const modalClose = document.createElement('button');
   modalClose.className = 'modalClose';
   modalClose.innerText = 'x';
 
-  modalClose.addEventListener( 'click', () => {
+  modalClose.addEventListener('click', () => {
     settingsModal.classList.toggle('hidden');
     settingsModal.remove();
   });
@@ -83,7 +83,7 @@ const openSettings = (id) => {
     console.log('post reported id: ' + id);
     buttonContainer.innerHTML = '';
     const reportReason = ['bruh', 'gank'];
-    for(const reason of reportReason) {
+    for (const reason of reportReason) {
       console.log(reason)
       const button = document.createElement('button');
       button.className = 'setting-modal-button';
@@ -96,6 +96,19 @@ const openSettings = (id) => {
       buttonContainer.appendChild(button);
     }
   });
+
+  if (loggedInUser()) {
+    const user = await getUser(loggedInUser());
+    if(user.isAdmin.data[0] === 1) {
+      console.log('user is admin');
+      const removeButton = document.createElement('button');
+      removeButton.className = 'setting-modal-button';
+      removeButton.id = 'remove-button';
+      removeButton.innerText = 'Remove';
+      //TODO: To model and checks in model
+      buttonContainer.appendChild(removeButton);
+    }
+  }
 
   buttonContainer.appendChild(reportButton);
 
