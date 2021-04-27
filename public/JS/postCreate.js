@@ -427,7 +427,7 @@ const createPosts = async (posts) => {
                 },
                 body: JSON.stringify(data),
               };
-              const response = await fetch(url + '/post/' + 1 + '/comment/' + loggedInUser(), fetchOptions);
+              const response = await fetch(url + '/post/' + post.post_id + '/comment/' + loggedInUser(), fetchOptions);
               await response;
               console.dir(response);
               if (response) {
