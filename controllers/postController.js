@@ -59,6 +59,14 @@ const post_remove = async (req, res) => {
     res.status(400).json({error: e.message});
   }
 }
+//finish
+// const post_report = async (req, res) => {
+//   try{
+//
+//   } catch (e) {
+//
+//   }
+// }
 
 module.exports = {
   posts_get,

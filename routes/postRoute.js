@@ -52,5 +52,7 @@ router.post('/upload/:id',
     postController.post_create);
 
 router.post('/remove/:id', passport.authenticate('jwt', {session: false}), isAdmin, postController.post_remove);
+//postController.......
+// router.post('/report/:id', passport.authenticate('jwt', {session: false}), postController);
 
 module.exports = router;

@@ -140,7 +140,7 @@ const openSettings = async (id) => {
   reportButton.className = 'setting-modal-button';
   reportButton.innerText = 'Report';
 
-  reportButton.addEventListener('click', async () => {
+  reportButton.addEventListener('click',  () => {
     console.log('post reported id: ' + id);
     buttonContainer.innerHTML = '';
     const reportReason = ['bruh', 'gank'];
@@ -149,19 +149,19 @@ const openSettings = async (id) => {
       const button = document.createElement('button');
       button.className = 'setting-modal-button';
       button.innerText = reason;
-      button.addEventListener('click', () => {
+      button.addEventListener('click', async () => {
         console.log('report reason: ' + reason);
         buttonContainer.innerHTML = '';
         buttonContainer.innerText = 'thanks for reporting';
-        //TODO:fetch here
-        const fetchOptions = {
-          method: 'POST',
-          headers: {
-            'Authorization': 'Bearer ' + sessionStorage.getItem('token'),
-          },
-        };
-        const response = await fetch(url + '/post/remove/' + id, fetchOptions);
-        return response.json();
+        //TODO:fetch here + add reason to body
+        // const fetchOptions = {
+        //   method: 'POST',
+        //   headers: {
+        //     'Authorization': 'Bearer ' + sessionStorage.getItem('token'),
+        //   },
+        // };
+        // const response = await fetch(url + '/post/report/' + id, fetchOptions);
+        // return response.json();
       });
       buttonContainer.appendChild(button);
     }
