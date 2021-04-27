@@ -17,7 +17,7 @@ const dateTimeMaker = () => {
 
 const getAllPosts = async () => {
   try {
-    const [rows] = await promisePool.query('SELECT * FROM user_post');
+    const [rows] = await promisePool.query('SELECT * FROM user_post WHERE vet IS NULL ORDER BY vst DESC');
     return rows;
   } catch (e) {
     console.error('getAllposts:', e.message);
@@ -121,6 +121,20 @@ const postCreate = async (user_id, content, caption) => {
   }
 }
 
+const postRemove = async (post_id) => {
+  try{
+    console.log('inpostremove')
+    await promisePool.execute(
+        'UPDATE user_post SET vet = ? WHERE post_id = ?',
+        [dateTimeMaker(), post_id]);
+    return true;
+  }catch (e) {
+    return false;
+  }
+}
+
+
+
 module.exports = {
   getAllPosts,
   getPostComments,
@@ -128,4 +142,5 @@ module.exports = {
   uploadComment,
   getPostVoteCount,
   postCreate,
+  postRemove,
 };

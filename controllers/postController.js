@@ -49,6 +49,17 @@ const crop_image = async (req, res, next) => {
   }
 }
 
+const post_remove = async (req, res) => {
+  try{
+    if(req.user[0].isAdmin) {
+      const postRemove = await postModel.postRemove(req.params.id);
+      res.send(postRemove);
+    }
+  }catch (e) {
+    res.status(400).json({error: e.message});
+  }
+}
+
 module.exports = {
   posts_get,
   post_get_username,
@@ -58,4 +69,5 @@ module.exports = {
   post_get_vote_count,
   post_create,
   crop_image,
+  post_remove,
 };

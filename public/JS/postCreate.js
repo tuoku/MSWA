@@ -140,7 +140,7 @@ const openSettings = async (id) => {
   reportButton.className = 'setting-modal-button';
   reportButton.innerText = 'Report';
 
-  reportButton.addEventListener('click', () => {
+  reportButton.addEventListener('click', async () => {
     console.log('post reported id: ' + id);
     buttonContainer.innerHTML = '';
     const reportReason = ['bruh', 'gank'];
@@ -153,6 +153,15 @@ const openSettings = async (id) => {
         console.log('report reason: ' + reason);
         buttonContainer.innerHTML = '';
         buttonContainer.innerText = 'thanks for reporting';
+        //TODO:fetch here
+        const fetchOptions = {
+          method: 'POST',
+          headers: {
+            'Authorization': 'Bearer ' + sessionStorage.getItem('token'),
+          },
+        };
+        const response = await fetch(url + '/post/remove/' + id, fetchOptions);
+        return response.json();
       });
       buttonContainer.appendChild(button);
     }
@@ -166,7 +175,17 @@ const openSettings = async (id) => {
       removeButton.className = 'setting-modal-button';
       removeButton.id = 'remove-button';
       removeButton.innerText = 'Remove';
-      //TODO: To model and checks in model
+
+      removeButton.addEventListener('click', async () => {
+        const fetchOptions = {
+          method: 'POST',
+          headers: {
+            'Authorization': 'Bearer ' + sessionStorage.getItem('token'),
+          },
+        };
+        const response = await fetch(url + '/post/remove/' + id, fetchOptions);
+        return response.json();
+      })
       buttonContainer.appendChild(removeButton);
     }
   }
@@ -427,7 +446,7 @@ const createPosts = async (posts) => {
                 },
                 body: JSON.stringify(data),
               };
-              const response = await fetch(url + '/post/' + 1 + '/comment/' + loggedInUser(), fetchOptions);
+              const response = await fetch(url + '/post/' + post.post_id + '/comment/' + loggedInUser(), fetchOptions);
               await response;
               console.dir(response);
               if (response) {

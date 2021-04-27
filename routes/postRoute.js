@@ -26,6 +26,16 @@ const testFile = (req, res, next) => {
   }
 };
 
+const isAdmin = (req, res, next) => {
+  console.log('isadmin middleware:' + req.user[0].isAdmin)
+  console.dir(req.user)
+  if(req.user[0].isAdmin) {
+    console.log('user is admin in route')
+    next();
+  }else{
+  }
+}
+
 const upload = multer({dest: 'uploads/', fileFilter:fileFilter});
 
 router.get('/', postController.posts_get);
@@ -40,5 +50,7 @@ router.post('/upload/:id',
     testFile,
     postController.crop_image,
     postController.post_create);
+
+router.post('/remove/:id', passport.authenticate('jwt', {session: false}), isAdmin, postController.post_remove);
 
 module.exports = router;
