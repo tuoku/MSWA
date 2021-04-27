@@ -3,6 +3,67 @@
 const body = document.querySelector('body');
 const main = document.querySelector('main');
 
+const userCreatePost = document.getElementById('addPostBtn');
+userCreatePost.addEventListener('click', () => {
+  console.log('create clicked');
+
+  const createPostModal = document.createElement('div');
+  createPostModal.className = 'modal';
+  const modalClose = document.createElement('button');
+  modalClose.className = 'modalClose';
+  modalClose.innerText = 'x';
+
+  modalClose.addEventListener('click', () => {
+    createPostModal.classList.toggle('hidden');
+    createPostModal.remove();
+  });
+
+  const postCreateContainer = document.createElement('div');
+  postCreateContainer.className = 'modal-container';
+  postCreateContainer.id = 'post-create-container';
+  const form = document.createElement('FORM');
+  form.id = 'post-create-form';
+  form.enctype = 'multipart/form-data';
+  const contentInput = document.createElement('INPUT');
+  contentInput.setAttribute('type', 'file');
+  contentInput.setAttribute('accept', 'image/*');
+  contentInput.setAttribute('placeholder', 'Choose File');
+  contentInput.setAttribute('name', 'content');
+  contentInput.required = true;
+  const captionInput = document.createElement('INPUT');
+  captionInput.setAttribute('type', 'text');
+  captionInput.setAttribute('placeholder', 'Caption');
+  captionInput.setAttribute('name', 'caption');
+  const postCreateSubmit = document.createElement('INPUT');
+  postCreateSubmit.setAttribute('type', 'submit');
+
+  form.appendChild(contentInput);
+  form.appendChild(captionInput);
+  form.appendChild(postCreateSubmit);
+
+  form.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const fd = new FormData(form)
+    const user = await getUser(loggedInUser());
+    const fetchOptions = {
+      method: 'POST',
+      headers: {
+        'Authorization': 'Bearer ' + sessionStorage.getItem('token'),
+      },
+      body: fd
+    };
+    const response = await fetch(url + '/post/upload/' + user.id, fetchOptions);
+    const json = await response.json();
+  });
+
+  postCreateContainer.appendChild(form);
+
+  createPostModal.appendChild(modalClose);
+  createPostModal.appendChild(postCreateContainer);
+  body.appendChild(createPostModal);
+
+});
+
 
 //url for local development, change on production server
 // const url = 'http://localhost:3000';
@@ -38,7 +99,7 @@ const votePost = async (postid, voterid, vote) => {
       'Authorization': 'Bearer ' + sessionStorage.getItem('token'),
     },
 
-    body: `{ "postid":"${postid}", "voterid":"${voterid}", "vote":"${vote}"}`,
+    body: `{"postid":"${postid}", "voterid":"${voterid}", "vote":"${vote}"}`,
   };
   const response = await fetch(url + '/post/vote', fetchOptions);
   return await response.json();
@@ -59,6 +120,63 @@ const getPostComment = async (id) => {
   const response = await fetch(url + '/post/comments/' + id);
   return await response.json();
 };
+
+const openSettings = async (id) => {
+  const settingsModal = document.createElement('div');
+  settingsModal.className = 'modal';
+  const modalClose = document.createElement('button');
+  modalClose.className = 'modalClose';
+  modalClose.innerText = 'x';
+
+  modalClose.addEventListener('click', () => {
+    settingsModal.classList.toggle('hidden');
+    settingsModal.remove();
+  });
+
+  const buttonContainer = document.createElement('div');
+  buttonContainer.className = 'modal-container';
+
+  const reportButton = document.createElement('button');
+  reportButton.className = 'setting-modal-button';
+  reportButton.innerText = 'Report';
+
+  reportButton.addEventListener('click', () => {
+    console.log('post reported id: ' + id);
+    buttonContainer.innerHTML = '';
+    const reportReason = ['bruh', 'gank'];
+    for (const reason of reportReason) {
+      console.log(reason)
+      const button = document.createElement('button');
+      button.className = 'setting-modal-button';
+      button.innerText = reason;
+      button.addEventListener('click', () => {
+        console.log('report reason: ' + reason);
+        buttonContainer.innerHTML = '';
+        buttonContainer.innerText = 'thanks for reporting';
+      });
+      buttonContainer.appendChild(button);
+    }
+  });
+
+  if (loggedInUser()) {
+    const user = await getUser(loggedInUser());
+    if(user.isAdmin.data[0] === 1) {
+      console.log('user is admin');
+      const removeButton = document.createElement('button');
+      removeButton.className = 'setting-modal-button';
+      removeButton.id = 'remove-button';
+      removeButton.innerText = 'Remove';
+      //TODO: To model and checks in model
+      buttonContainer.appendChild(removeButton);
+    }
+  }
+
+  buttonContainer.appendChild(reportButton);
+
+  settingsModal.appendChild(modalClose);
+  settingsModal.appendChild(buttonContainer);
+  body.appendChild(settingsModal);
+}
 
 
 //TODO: Couple of posts at a time not the whole database
@@ -121,7 +239,8 @@ const createPosts = async (posts) => {
     postUserPictureDiv.appendChild(posterProfilePicture);
 
 //Top username of poster
-    const posterUsername = document.createElement('p');
+    const posterUsername = document.createElement('a');
+    posterUsername.href = 'profile.html?id=' + post.owner_id;
     posterUsername.innerText = (await getUser(post.owner_id)).username;
     postUserUsernameDiv.appendChild(posterUsername);
 
@@ -132,19 +251,19 @@ const createPosts = async (posts) => {
 
 //Post content
     const postContent = document.createElement('img');
-    postContent.src = post.picFilename;
+    postContent.src = url + '/thumbnails/' + post.picFilename;
     postContent.alt = 'Post content';
     postContentDiv.appendChild(postContent);
 
 //Caption
     //Caption text
     const postCaption = document.createElement('p');
-    postCaption.className = 'hideCaption';
+    postCaption.className = 'hide-caption';
     postCaption.innerText = post.caption;
 
     //This creates Show more "button"
     const showMoreLink = document.createElement('a');
-    showMoreLink.href = '#';
+    showMoreLink.id = 'showmore'+ post.post_id;
     showMoreLink.innerText = 'Show more';
 
     postCaptionDiv.appendChild(postCaption);
@@ -162,6 +281,7 @@ const createPosts = async (posts) => {
     postLikeButton.src = './ICONS/arrowup_icon.png';
     postDislikeButton.src = './ICONS/arrowdown_icon.png';
     postCommentButton.src = './ICONS/comment_icon.png';
+
     postLikeButtonDiv.appendChild(postLikeButton);
     postDislikeButtonDiv.appendChild(postDislikeButton);
     postCommentButtonDiv.appendChild(postCommentButton);
@@ -176,9 +296,10 @@ const createPosts = async (posts) => {
     //Loop thru and create elements to insert comments
     for (const comment of commentList) {
       const postCommentDiv = document.createElement('div');
-      const postCommentUsername = document.createElement('p');
+      const postCommentUsername = document.createElement('a');
       const postCommentContent = document.createElement('p');
 
+      postCommentUsername.href = 'profile.html?id=' + comment.owner_id;
       postCommentDiv.id = 'post-comment';
       postCommentUsername.id = 'post-comment-username';
       postCommentContent.id = 'post-comment-content';
@@ -208,21 +329,26 @@ const createPosts = async (posts) => {
 
     main.appendChild(postBody);
 
-    //Functionality
-    //TODO: clicking should go to profile page
+    //Hides show more if caption isnt long enough to overflow
+    if(postCaption.scrollWidth <= postCaption.clientWidth) {
+      document.getElementById('showmore' + post.post_id).style.display = 'none';
+    }
+
+      //Functionality
     postUserUsernameDiv.addEventListener('click', () => {
-      console.log('Username clicked at post number ' + post.post_id);
+      window.location.href = 'profile.html?id=' + post.owner_id
     });
 
     postSettingsDiv.addEventListener('click', () => {
       console.log('Settings clicked at post number ' + post.post_id);
+
+      openSettings(post.post_id);
     });
 
     //after refresh can still like/dislike
     postLikeButtonDiv.addEventListener('click',  () => {
       if(loggedInUser()) {
         const startingValue = parseInt(postLikes.innerText);
-        //TODO: Voterid should be logged in user's
         votePost(post.post_id, loggedInUser(), 1).then((response) => {
           if (response === 1) {
             postLikes.innerText = (startingValue + 1).toString() + ' likes';
@@ -241,7 +367,6 @@ const createPosts = async (posts) => {
 
     postDislikeButtonDiv.addEventListener('click', () => {
       if(loggedInUser()) {
-        //TODO: Voterid should be logged in user's
         const startingValue = parseInt(postLikes.innerText);
         votePost(post.post_id, loggedInUser(), 0).then((response) => {
           if (response === 1) {
@@ -276,9 +401,9 @@ const createPosts = async (posts) => {
           commentSubmit.setAttribute('type', 'submit');
           commentSubmit.value = 'Comment';
 
-          commentInputText.id = 'commentInputText';
+          commentInputText.id = 'comment-input-text';
           commentInputText.name = 'jsonComment';
-          commentSubmit.id = 'commentSubmit';
+          commentSubmit.id = 'comment-submit';
 
           commentForm.appendChild(commentInputText);
           commentForm.appendChild(commentSubmit);
@@ -302,12 +427,11 @@ const createPosts = async (posts) => {
                 },
                 body: JSON.stringify(data),
               };
-              const response = await fetch(url + '/post/' + 1 + '/comment/' + loggedInUser(), fetchOptions);
+              const response = await fetch(url + '/post/' + post.post_id + '/comment/' + loggedInUser(), fetchOptions);
               await response;
               console.dir(response);
               if (response) {
                 console.log('comment was submitted');
-
                 const postCommentDiv = document.createElement('div');
                 const postCommentUsername = document.createElement('p');
                 const postCommentContent = document.createElement('p');
@@ -334,18 +458,16 @@ const createPosts = async (posts) => {
       }else{
         alert('You have to be logged in to comment');
       }
-
     });
 
-    //TODO: Show more should be visible only when caption make newline (help: https://stackoverflow.com/questions/783899/how-can-i-count-text-lines-inside-an-dom-element-can-i)
     //Show more "Button"
     showMoreLink.addEventListener('click', () => {
       if (showMoreLink.innerText === 'Show more') {
         showMoreLink.innerText = 'Show less';
-        postCaption.className = 'showCaption';
+        postCaption.className = 'show-caption';
       } else {
         showMoreLink.innerText = 'Show more';
-        postCaption.className = 'hideCaption';
+        postCaption.className = 'hide-caption';
       }
     });
   }
