@@ -2,6 +2,7 @@
 
 const postModel = require('../models/postModel');
 const userModel = require('../models/userModel');
+const {cropImage} = require('../utils/resize');
 
 const posts_get = async (req, res) => {
   const postList = await postModel.getAllPosts();
@@ -31,6 +32,23 @@ const post_comment_upload = async (req, res) => {
   const uploadComment = await postModel.uploadComment(req.params.postid, req.params.ownerid, req.body.jsonComment);
   res.send(uploadComment);
 }
+
+const post_create = async (req, res) => {
+  const postCreate = await postModel.postCreate(req.params.id, req.file, req.body.caption);
+  res.send(postCreate);
+}
+
+const crop_image = async (req, res, next) => {
+  try {
+    const crop = await cropImage(req.file.path, req.file.filename);
+    if(crop) {
+      next();
+    }
+  }catch (e) {
+    res.status(400).json({error: e.message});
+  }
+}
+
 module.exports = {
   posts_get,
   post_get_username,
@@ -38,4 +56,6 @@ module.exports = {
   post_comment_upload,
   post_vote,
   post_get_vote_count,
+  post_create,
+  crop_image,
 };
