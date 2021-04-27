@@ -4,7 +4,7 @@ const body = document.querySelector('body');
 const main = document.querySelector('main');
 
 const userCreatePost = document.getElementById('addPostBtn');
-userCreatePost.addEventListener('click', (id) => {
+userCreatePost.addEventListener('click', () => {
   console.log('create clicked');
 
   const createPostModal = document.createElement('div');
@@ -23,29 +23,37 @@ userCreatePost.addEventListener('click', (id) => {
   postCreateContainer.id = 'post-create-container';
   const form = document.createElement('FORM');
   form.id = 'post-create-form';
-  const contentInput = document.createElement('INPUT')
+  form.enctype = 'multipart/form-data';
+  const contentInput = document.createElement('INPUT');
   contentInput.setAttribute('type', 'file');
   contentInput.setAttribute('accept', 'image/*');
   contentInput.setAttribute('placeholder', 'Choose File');
+  contentInput.setAttribute('name', 'content');
   contentInput.required = true;
   const captionInput = document.createElement('INPUT');
   captionInput.setAttribute('type', 'text');
   captionInput.setAttribute('placeholder', 'Caption');
-  const tagInput = document.createElement('INPUT');
-  tagInput.setAttribute('type', 'text');
-  tagInput.setAttribute('placeholder', 'Tags');
+  captionInput.setAttribute('name', 'caption');
   const postCreateSubmit = document.createElement('INPUT');
   postCreateSubmit.setAttribute('type', 'submit');
 
-
   form.appendChild(contentInput);
   form.appendChild(captionInput);
-  form.appendChild(tagInput);
   form.appendChild(postCreateSubmit);
 
   form.addEventListener('submit', async (e) => {
     e.preventDefault();
-    console.log('submitted');
+    const fd = new FormData(form)
+    const user = await getUser(loggedInUser());
+    const fetchOptions = {
+      method: 'POST',
+      headers: {
+        'Authorization': 'Bearer ' + sessionStorage.getItem('token'),
+      },
+      body: fd
+    };
+    const response = await fetch(url + '/post/upload/' + user.id, fetchOptions);
+    const json = await response.json();
   });
 
   postCreateContainer.appendChild(form);
@@ -91,7 +99,7 @@ const votePost = async (postid, voterid, vote) => {
       'Authorization': 'Bearer ' + sessionStorage.getItem('token'),
     },
 
-    body: `{ "postid":"${postid}", "voterid":"${voterid}", "vote":"${vote}"}`,
+    body: `{"postid":"${postid}", "voterid":"${voterid}", "vote":"${vote}"}`,
   };
   const response = await fetch(url + '/post/vote', fetchOptions);
   return await response.json();
@@ -243,7 +251,7 @@ const createPosts = async (posts) => {
 
 //Post content
     const postContent = document.createElement('img');
-    postContent.src = post.picFilename;
+    postContent.src = url + '/thumbnails/' + post.picFilename;
     postContent.alt = 'Post content';
     postContentDiv.appendChild(postContent);
 

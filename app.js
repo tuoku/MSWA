@@ -21,11 +21,10 @@ app.use ((req, res, next) => {
 
 app.use(cors());
 app.use(bodyParser.json());
-
+app.use(bodyParser.urlencoded({ extended: false }));
 app.use('/auth', authRoute);
 app.use('/post', postRoute);
+app.use('/thumbnails', express.static('thumbnails'));
 app.use('/uploads', express.static('./uploads'));
-app.use('/auth', authRoute);
-app.use('/user', userRoute);
 
 app.listen(port, () => console.log(`App listening on port ${port}!`));
