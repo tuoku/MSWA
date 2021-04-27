@@ -107,10 +107,25 @@ const uploadComment = async (post_id, user_id, comment) => {
   }
 };
 
+const postCreate = async (user_id, content, caption) => {
+  try{
+    console.log('heres what came into model: ' + user_id + content.filename + caption);
+    const [row] = await promisePool.execute(
+        'INSERT INTO user_post (owner_id, picFilename, caption, vst) VALUES (?, ?, ?, ?);',
+        [user_id, content.filename, caption, dateTimeMaker()]);
+    console.log('postCreate insert: ', row);
+    return true;
+  }catch (e) {
+    console.error('postCreate:', e.message);
+    return false;
+  }
+}
+
 module.exports = {
   getAllPosts,
   getPostComments,
   votePost,
   uploadComment,
   getPostVoteCount,
+  postCreate,
 };
