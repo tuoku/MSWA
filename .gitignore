@@ -259,4 +259,8 @@ $RECYCLE.BIN/
 # Windows shortcuts
 *.lnk
 
+#Uploads
+uploads/*
+thumbnails/*
+
 # End of https://www.toptal.com/developers/gitignore/api/windows,webstorm,node
