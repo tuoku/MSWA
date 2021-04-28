@@ -15,6 +15,39 @@ const dateTimeMaker = () => {
       seconds);
 };
 
+// Method for parsing hashtags from a string into an array of strings
+// and uploading each tag into db
+// each tag is UNIQUE in db
+const parseTags = async (string, postID) => {
+  let tags = string.match(/#[\p{L}]+/ugi);
+  for(let tag of tags){
+    try {
+      await promisePool.query('INSERT INTO hashtag (name) VALUES (?)', [tag.replace('#','')]);
+    } catch (e) {
+      console.log(e)
+    }
+    // link tags to post
+    try{
+      let [tagrow] = await promisePool.query('SELECT * FROM hashtag WHERE name = ?', [tag.replace('#','')])
+      await promisePool.query('INSERT INTO post_tags VALUES (?, ?)', [postID, tagrow[0].id])
+    } catch (e) {
+      console.log(e)
+    }
+  }
+}
+
+// method for finding hashtags that start with the specified characters
+const getTags = async (chars) => {
+  try {
+    console.log(chars);
+    const [rows] = await promisePool.execute(
+        'SELECT * FROM hashtag WHERE name LIKE CONCAT(?,"%");', [chars]);
+    return rows;
+  } catch (e) {
+    console.log('error', e.message);
+  }
+}
+
 const getAllPosts = async () => {
   try {
     const [rows] = await promisePool.query('SELECT * FROM user_post');
@@ -114,6 +147,7 @@ const postCreate = async (user_id, content, caption) => {
         'INSERT INTO user_post (owner_id, picFilename, caption, vst) VALUES (?, ?, ?, ?);',
         [user_id, content.filename, caption, dateTimeMaker()]);
     console.log('postCreate insert: ', row);
+    await parseTags(caption, row.insertId)
     return true;
   }catch (e) {
     console.error('postCreate:', e.message);
@@ -128,4 +162,5 @@ module.exports = {
   uploadComment,
   getPostVoteCount,
   postCreate,
+  getTags,
 };
