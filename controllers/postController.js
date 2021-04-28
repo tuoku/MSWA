@@ -50,16 +50,14 @@ const crop_image = async (req, res, next) => {
 }
 
 const post_remove = async (req, res) => {
-  try{
-    if(req.user[0].isAdmin) {
-      const postRemove = await postModel.postRemove(req.params.id);
-      res.send(postRemove);
-    }
-  }catch (e) {
+  if(req.user[0].isAdmin) {
+    const postRemove = await postModel.postRemove(req.params.id);
+    res.send(postRemove);
+  } else {
     res.status(400).json({error: e.message});
   }
 }
-//finish
+
 const post_report = async (req, res) => {
   const postReport = await postModel.postReport(req.params.reportid, req.params.postid)
   res.send(postReport);

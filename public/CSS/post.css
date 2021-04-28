@@ -157,7 +157,6 @@ a:hover {
 .modal-container {
     display: flex;
     flex-direction: column;
-    height: 30vh;
     width: 320px;
     margin-top: -160px;
     margin-left: -160px;
@@ -168,7 +167,7 @@ a:hover {
     align-items: center;
     font-family: 'Poppins', sans-serif;
     border-radius: 10px;
-    padding-top: 20px;
+    padding: 10px 0;
 }
 
 .setting-modal-button {

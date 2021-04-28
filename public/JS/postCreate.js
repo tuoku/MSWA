@@ -3,10 +3,9 @@
 const body = document.querySelector('body');
 const main = document.querySelector('main');
 
+//Bottom navs center button
 const userCreatePost = document.getElementById('addPostBtn');
 userCreatePost.addEventListener('click', () => {
-  console.log('create clicked');
-
   const createPostModal = document.createElement('div');
   createPostModal.className = 'modal';
   const modalClose = document.createElement('button');
@@ -21,19 +20,24 @@ userCreatePost.addEventListener('click', () => {
   const postCreateContainer = document.createElement('div');
   postCreateContainer.className = 'modal-container';
   postCreateContainer.id = 'post-create-container';
+
+  //Form for post creation
   const form = document.createElement('FORM');
   form.id = 'post-create-form';
   form.enctype = 'multipart/form-data';
+
   const contentInput = document.createElement('INPUT');
   contentInput.setAttribute('type', 'file');
   contentInput.setAttribute('accept', 'image/*');
   contentInput.setAttribute('placeholder', 'Choose File');
   contentInput.setAttribute('name', 'content');
   contentInput.required = true;
+
   const captionInput = document.createElement('INPUT');
   captionInput.setAttribute('type', 'text');
   captionInput.setAttribute('placeholder', 'Caption');
   captionInput.setAttribute('name', 'caption');
+
   const postCreateSubmit = document.createElement('INPUT');
   postCreateSubmit.setAttribute('type', 'submit');
 
@@ -43,17 +47,20 @@ userCreatePost.addEventListener('click', () => {
 
   form.addEventListener('submit', async (e) => {
     e.preventDefault();
-    const fd = new FormData(form)
+    const fd = new FormData(form);
     const user = await getUser(loggedInUser());
     const fetchOptions = {
       method: 'POST',
       headers: {
         'Authorization': 'Bearer ' + sessionStorage.getItem('token'),
       },
-      body: fd
+      body: fd,
     };
     const response = await fetch(url + '/post/upload/' + user.id, fetchOptions);
     const json = await response.json();
+    if (json.error) {
+      alert(json.error);
+    }
   });
 
   postCreateContainer.appendChild(form);
@@ -61,12 +68,7 @@ userCreatePost.addEventListener('click', () => {
   createPostModal.appendChild(modalClose);
   createPostModal.appendChild(postCreateContainer);
   body.appendChild(createPostModal);
-
 });
-
-
-//url for local development, change on production server
-// const url = 'http://localhost:3000';
 
 //Fetches all posts from database and calls function to show them
 const getPosts = async () => {
@@ -75,18 +77,17 @@ const getPosts = async () => {
   createPosts(posts);
 };
 
-getPosts().then( () => {
-  loggedInUser()
-});
+getPosts();
 
-const loggedInUser = () => {
-  try{
+//Parses token and returns user id if user is signed in
+const loggedInUser = (() => {
+  try {
     const user = parseJwt(sessionStorage.getItem('token'));
     return user.id;
-  }catch (e) {
+  } catch (e) {
     return false;
   }
-}
+});
 
 //Vote is like/dislike, 1/0 respectively
 const votePost = async (postid, voterid, vote) => {
@@ -96,7 +97,6 @@ const votePost = async (postid, voterid, vote) => {
       'Content-Type': 'application/json',
       'Authorization': 'Bearer ' + sessionStorage.getItem('token'),
     },
-
     body: `{"postid":"${postid}", "voterid":"${voterid}", "vote":"${vote}"}`,
   };
   const response = await fetch(url + '/post/vote', fetchOptions);
@@ -112,7 +112,7 @@ const getUser = async (id) => {
   const response = await fetch(url + '/post/owner/' + id);
   const postOwner = await response.json();
   return postOwner[0];
-}
+};
 
 const getPostComment = async (id) => {
   const response = await fetch(url + '/post/comments/' + id);
@@ -120,7 +120,8 @@ const getPostComment = async (id) => {
 };
 
 const openSettings = async (postid) => {
-  if(loggedInUser()) {
+  //Only doable if user has logged in
+  if (loggedInUser()) {
     const settingsModal = document.createElement('div');
     settingsModal.className = 'modal';
     const modalClose = document.createElement('button');
@@ -139,60 +140,81 @@ const openSettings = async (postid) => {
     reportButton.className = 'setting-modal-button';
     reportButton.innerText = 'Report';
 
-    reportButton.addEventListener('click',  async () => {
+    reportButton.addEventListener('click', async () => {
       buttonContainer.innerHTML = '';
-      const reportReason = (await(await fetch(url + '/post/report/reasons')).json())
-      for (const reason of reportReason) {
+      //List of reasons
+      const reportReasons = (await (await fetch(
+          url + '/post/report/reasons')).json());
+      for (const reason of reportReasons) {
+        //Creates a button for each button and sets its innerText as reason
         const button = document.createElement('button');
         button.className = 'setting-modal-button';
         button.innerText = reason.name;
+
         button.addEventListener('click', async () => {
           buttonContainer.innerHTML = '';
-          buttonContainer.innerText = 'thanks for reporting';
+          buttonContainer.innerText = 'Thanks for reporting';
+
+          const closeButton = document.createElement('button');
+          closeButton.innerText = 'Close';
+
+          closeButton.addEventListener('click', () => {
+            settingsModal.classList.toggle('hidden');
+            settingsModal.remove();
+          });
+
+          button.appendChild(closeButton);
+          buttonContainer.appendChild(button);
+
           const fetchOptions = {
             method: 'POST',
             headers: {
               'Authorization': 'Bearer ' + sessionStorage.getItem('token'),
             },
           };
-          await fetch(url + '/post/report/' + postid + '/' + reason.id, fetchOptions);
+          await fetch(url + '/post/report/' + postid + '/' + reason.id,
+              fetchOptions);
         });
+        //Adds every reason button to container
         buttonContainer.appendChild(button);
       }
     });
 
-      const user = await getUser(loggedInUser());
-      if(user.isAdmin.data[0] === 1) {
-        const removeButton = document.createElement('button');
-        removeButton.className = 'setting-modal-button';
-        removeButton.id = 'remove-button';
-        removeButton.innerText = 'Remove';
+    const user = await getUser(loggedInUser());
+    //If user is admin then gets extra settings for post
+    if (user.isAdmin.data[0] === 1) {
+      const removeButton = document.createElement('button');
+      removeButton.className = 'setting-modal-button';
+      removeButton.id = 'remove-button';
+      removeButton.innerText = 'Remove';
 
-        removeButton.addEventListener('click', async () => {
-          const fetchOptions = {
-            method: 'POST',
-            headers: {
-              'Authorization': 'Bearer ' + sessionStorage.getItem('token'),
-            },
-          };
-          const response = await fetch(url + '/post/remove/' + postid, fetchOptions);
-          return response.json();
-        })
-        buttonContainer.appendChild(removeButton);
-      }
+      removeButton.addEventListener('click', async () => {
+        const fetchOptions = {
+          method: 'POST',
+          headers: {
+            'Authorization': 'Bearer ' + sessionStorage.getItem('token'),
+          },
+        };
+        const response = await fetch(url + '/post/remove/' + postid,
+            fetchOptions);
+        return response.json();
+      });
+
+      buttonContainer.appendChild(removeButton);
+    }
     buttonContainer.appendChild(reportButton);
     settingsModal.appendChild(modalClose);
     settingsModal.appendChild(buttonContainer);
     body.appendChild(settingsModal);
-  }else{
+  } else {
     alert('You have to be logged in to do this action');
   }
-}
-
+};
 
 //TODO: Couple of posts at a time not the whole database
 const createPosts = async (posts) => {
   for (const post of posts) {
+    //Creates article elements which is container for post
     const postBody = document.createElement('article');
 
     //Header section of post
@@ -202,10 +224,10 @@ const createPosts = async (posts) => {
     const postUserUsernameDiv = document.createElement('div');
     const postSettingsDiv = document.createElement('div');
 
-//Content section of post
+    //Content section of post
     const postContentDiv = document.createElement('div');
 
-//Ending section of post
+    //Ending section of post
     const postEndDiv = document.createElement('div');
     const postCaptionDiv = document.createElement('div');
     const postLikesDiv = document.createElement('div');
@@ -215,21 +237,21 @@ const createPosts = async (posts) => {
     const postCommentButtonDiv = document.createElement('div');
     const postCommentsDiv = document.createElement('div');
 
-//Setting element classnames
-//Container
+    //Setting element classnames
+    //Container
     postBody.className = 'post';
 
-//Header
+    //Header
     postHeadDiv.className = 'post-head';
     postUserInfoDiv.className = 'post-user-info';
     postUserPictureDiv.id = 'post-user-picture';
     postUserUsernameDiv.id = 'post-user-username';
     postSettingsDiv.className = 'post-settings';
 
-//Content
+    //Content
     postContentDiv.className = 'post-content';
 
-//End
+    //End
     postEndDiv.className = 'post-end';
     postCaptionDiv.className = 'post-caption';
     postLikesDiv.className = 'post-likes';
@@ -239,34 +261,34 @@ const createPosts = async (posts) => {
     postCommentButtonDiv.className = 'post-comment-button';
     postCommentsDiv.className = 'post-comments';
 
-//Mini profile picture top left corner of post
+    //Mini profile picture top left corner of post
     const posterProfilePicture = document.createElement('img');
     const profilePicFolder = './IMG/';
-    const profilePic = (await getUser(post.owner_id)).profileFilename
+    const profilePic = (await getUser(post.owner_id)).profileFilename;
     posterProfilePicture.src = profilePicFolder + profilePic + '.jpg';
     posterProfilePicture.alt = 'Profile picture of post owner';
     posterProfilePicture.width = '32';
     posterProfilePicture.height = '32';
     postUserPictureDiv.appendChild(posterProfilePicture);
 
-//Top username of poster
+    //Top username of poster
     const posterUsername = document.createElement('a');
     posterUsername.href = 'profile.html?id=' + post.owner_id;
     posterUsername.innerText = (await getUser(post.owner_id)).username;
     postUserUsernameDiv.appendChild(posterUsername);
 
-//Top right settings icon/button
+    //Top right settings icon/button
     const postSettingsIcon = document.createElement('img');
     postSettingsIcon.src = './ICONS/settings_icon.png';
     postSettingsDiv.appendChild(postSettingsIcon);
 
-//Post content
+    //Post content
     const postContent = document.createElement('img');
     postContent.src = url + '/thumbnails/' + post.picFilename;
     postContent.alt = 'Post content';
     postContentDiv.appendChild(postContent);
 
-//Caption
+    //Caption
     //Caption text
     const postCaption = document.createElement('p');
     postCaption.className = 'hide-caption';
@@ -274,18 +296,18 @@ const createPosts = async (posts) => {
 
     //This creates Show more "button"
     const showMoreLink = document.createElement('a');
-    showMoreLink.id = 'showmore'+ post.post_id;
+    showMoreLink.id = 'showmore' + post.post_id;
     showMoreLink.innerText = 'Show more';
 
     postCaptionDiv.appendChild(postCaption);
     postCaptionDiv.appendChild(showMoreLink);
 
-//Like amount
+    //Like amount
     const postLikes = document.createElement('p');
     postLikes.innerText = await getPostVoteCount(post.post_id) + ' likes';
     postLikesDiv.appendChild(postLikes);
 
-//Like, dislike and comment icons/buttons
+    //Like, dislike and comment icons/buttons
     const postLikeButton = document.createElement('img');
     const postDislikeButton = document.createElement('img');
     const postCommentButton = document.createElement('img');
@@ -301,7 +323,7 @@ const createPosts = async (posts) => {
     postOptionsDiv.appendChild(postDislikeButtonDiv);
     postOptionsDiv.appendChild(postCommentButtonDiv);
 
-//Fetch post comments
+    //Fetch post comments
     const commentList = await getPostComment(post.post_id);
 
     //Loop thru and create elements to insert comments
@@ -315,14 +337,15 @@ const createPosts = async (posts) => {
       postCommentUsername.id = 'post-comment-username';
       postCommentContent.id = 'post-comment-content';
 
-      postCommentUsername.innerText = (await getUser(comment.owner_id)).username;
+      postCommentUsername.innerText = (await getUser(
+          comment.owner_id)).username;
       postCommentContent.innerText = comment.commentText;
       postCommentDiv.appendChild(postCommentUsername);
       postCommentDiv.appendChild(postCommentContent);
       postCommentsDiv.appendChild(postCommentDiv);
     }
 
-//Setting elements as children of others
+    //Setting elements as children of others
     postEndDiv.appendChild(postCaptionDiv);
     postEndDiv.appendChild(postLikesDiv);
     postEndDiv.appendChild(postOptionsDiv);
@@ -341,24 +364,21 @@ const createPosts = async (posts) => {
     main.appendChild(postBody);
 
     //Hides show more if caption isnt long enough to overflow
-    if(postCaption.scrollWidth <= postCaption.clientWidth) {
+    if (postCaption.scrollWidth <= postCaption.clientWidth) {
       document.getElementById('showmore' + post.post_id).style.display = 'none';
     }
 
-      //Functionality
+    //Functionality
     postUserUsernameDiv.addEventListener('click', () => {
-      window.location.href = 'profile.html?id=' + post.owner_id
+      window.location.href = 'profile.html?id=' + post.owner_id;
     });
 
     postSettingsDiv.addEventListener('click', () => {
-      console.log('Settings clicked at post number ' + post.post_id);
-
       openSettings(post.post_id);
     });
 
-    //after refresh can still like/dislike
-    postLikeButtonDiv.addEventListener('click',  () => {
-      if(loggedInUser()) {
+    postLikeButtonDiv.addEventListener('click', () => {
+      if (loggedInUser()) {
         const startingValue = parseInt(postLikes.innerText);
         votePost(post.post_id, loggedInUser(), 1).then((response) => {
           if (response === 1) {
@@ -371,13 +391,13 @@ const createPosts = async (posts) => {
             postLikes.innerText = (startingValue + 2).toString() + ' likes';
           }
         });
-      }else{
+      } else {
         alert('You have to be logged in to like');
       }
     });
 
     postDislikeButtonDiv.addEventListener('click', () => {
-      if(loggedInUser()) {
+      if (loggedInUser()) {
         const startingValue = parseInt(postLikes.innerText);
         votePost(post.post_id, loggedInUser(), 0).then((response) => {
           if (response === 1) {
@@ -390,16 +410,17 @@ const createPosts = async (posts) => {
             postLikes.innerText = (startingValue - 2).toString() + ' likes';
           }
         });
-      }else{
+      } else {
         alert('You have to be logged in to dislike');
       }
     });
 
     postCommentButtonDiv.addEventListener('click', () => {
-      if(loggedInUser()) {
+      if (loggedInUser()) {
         //Toggleable commenting field
         if (document.getElementById('write-comment-box' + post.post_id)) {
-          const commentBox = document.getElementById('write-comment-box' + post.post_id);
+          const commentBox = document.getElementById(
+              'write-comment-box' + post.post_id);
           commentBox.remove();
         } else {
           const newCommentBox = document.createElement('div');
@@ -421,12 +442,12 @@ const createPosts = async (posts) => {
           newCommentBox.appendChild(commentForm);
           postCommentsDiv.appendChild(newCommentBox);
 
-          //TODO: Sanitize input before sending it to model
           commentForm.addEventListener('submit', async (e) => {
             e.preventDefault();
 
-            if(commentInputText.value.length > 0) {
-              const commentBox = document.getElementById('write-comment-box' + post.post_id);
+            if (commentInputText.value.length > 0) {
+              const commentBox = document.getElementById(
+                  'write-comment-box' + post.post_id);
               commentBox.remove();
 
               const data = serializeJson(commentForm);
@@ -438,11 +459,11 @@ const createPosts = async (posts) => {
                 },
                 body: JSON.stringify(data),
               };
-              const response = await fetch(url + '/post/' + post.post_id + '/comment/' + loggedInUser(), fetchOptions);
-              await response;
-              console.dir(response);
-              if (response) {
-                console.log('comment was submitted');
+              const response = await fetch(
+                  url + '/post/' + post.post_id + '/comment/' + loggedInUser(),
+                  fetchOptions);
+
+              if (await response) {
                 const postCommentDiv = document.createElement('div');
                 const postCommentUsername = document.createElement('p');
                 const postCommentContent = document.createElement('p');
@@ -450,9 +471,7 @@ const createPosts = async (posts) => {
                 postCommentUsername.id = 'post-comment-username';
                 postCommentContent.id = 'post-comment-content';
 
-                console.dir(await getUser(loggedInUser()).username);
                 postCommentUsername.innerText = (await getUser(loggedInUser())).username;
-
                 postCommentContent.innerText = commentInputText.value;
 
                 postCommentDiv.appendChild(postCommentUsername);
@@ -461,12 +480,12 @@ const createPosts = async (posts) => {
               } else {
                 console.log('something went wrong');
               }
-            }else{
+            } else {
               alert('Comment something, bruh comeon');
             }
           });
         }
-      }else{
+      } else {
         alert('You have to be logged in to comment');
       }
     });
@@ -483,8 +502,3 @@ const createPosts = async (posts) => {
     });
   }
 };
-
-// body.appendChild(main);
-
-
-
