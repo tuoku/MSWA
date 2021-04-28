@@ -34,6 +34,7 @@ router.get('/comments/:id', postController.post_get_comments);
 router.post('/:postid/comment/:ownerid', passport.authenticate('jwt', {session: false}), jsonParser, postController.post_comment_upload);
 router.post('/vote', passport.authenticate('jwt', {session: false}), postController.post_vote);
 router.get('/:id/votecount', postController.post_get_vote_count);
+router.get('/hashtag/:chars', postController.get_hashtags);
 
 router.post('/upload/:id',
     upload.single('content'),

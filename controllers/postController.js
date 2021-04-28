@@ -38,6 +38,11 @@ const post_create = async (req, res) => {
   res.send(postCreate);
 }
 
+const get_hashtags = async (req, res) => {
+  const tags = await postModel.getTags(req.params.chars);
+  res.json(tags)
+}
+
 const crop_image = async (req, res, next) => {
   try {
     const crop = await cropImage(req.file.path, req.file.filename);
@@ -58,4 +63,5 @@ module.exports = {
   post_get_vote_count,
   post_create,
   crop_image,
+  get_hashtags,
 };
