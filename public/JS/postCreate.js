@@ -82,10 +82,8 @@ getPosts().then( () => {
 const loggedInUser = () => {
   try{
     const user = parseJwt(sessionStorage.getItem('token'));
-    console.log('loggedInUser: ' + user.id);
     return user.id;
   }catch (e) {
-    console.log('hasnt logged in')
     return false;
   }
 }
@@ -121,80 +119,74 @@ const getPostComment = async (id) => {
   return await response.json();
 };
 
-const openSettings = async (id) => {
-  const settingsModal = document.createElement('div');
-  settingsModal.className = 'modal';
-  const modalClose = document.createElement('button');
-  modalClose.className = 'modalClose';
-  modalClose.innerText = 'x';
+const openSettings = async (postid) => {
+  if(loggedInUser()) {
+    const settingsModal = document.createElement('div');
+    settingsModal.className = 'modal';
+    const modalClose = document.createElement('button');
+    modalClose.className = 'modalClose';
+    modalClose.innerText = 'x';
 
-  modalClose.addEventListener('click', () => {
-    settingsModal.classList.toggle('hidden');
-    settingsModal.remove();
-  });
+    modalClose.addEventListener('click', () => {
+      settingsModal.classList.toggle('hidden');
+      settingsModal.remove();
+    });
 
-  const buttonContainer = document.createElement('div');
-  buttonContainer.className = 'modal-container';
+    const buttonContainer = document.createElement('div');
+    buttonContainer.className = 'modal-container';
 
-  const reportButton = document.createElement('button');
-  reportButton.className = 'setting-modal-button';
-  reportButton.innerText = 'Report';
+    const reportButton = document.createElement('button');
+    reportButton.className = 'setting-modal-button';
+    reportButton.innerText = 'Report';
 
-  reportButton.addEventListener('click',  () => {
-    console.log('post reported id: ' + id);
-    buttonContainer.innerHTML = '';
-    const reportReason = ['bruh', 'gank'];
-    for (const reason of reportReason) {
-      console.log(reason)
-      const button = document.createElement('button');
-      button.className = 'setting-modal-button';
-      button.innerText = reason;
-      button.addEventListener('click', async () => {
-        console.log('report reason: ' + reason);
-        buttonContainer.innerHTML = '';
-        buttonContainer.innerText = 'thanks for reporting';
-        //TODO:fetch here + add reason to body
-        // const fetchOptions = {
-        //   method: 'POST',
-        //   headers: {
-        //     'Authorization': 'Bearer ' + sessionStorage.getItem('token'),
-        //   },
-        // };
-        // const response = await fetch(url + '/post/report/' + id, fetchOptions);
-        // return response.json();
-      });
-      buttonContainer.appendChild(button);
-    }
-  });
+    reportButton.addEventListener('click',  async () => {
+      buttonContainer.innerHTML = '';
+      const reportReason = (await(await fetch(url + '/post/report/reasons')).json())
+      for (const reason of reportReason) {
+        const button = document.createElement('button');
+        button.className = 'setting-modal-button';
+        button.innerText = reason.name;
+        button.addEventListener('click', async () => {
+          buttonContainer.innerHTML = '';
+          buttonContainer.innerText = 'thanks for reporting';
+          const fetchOptions = {
+            method: 'POST',
+            headers: {
+              'Authorization': 'Bearer ' + sessionStorage.getItem('token'),
+            },
+          };
+          await fetch(url + '/post/report/' + postid + '/' + reason.id, fetchOptions);
+        });
+        buttonContainer.appendChild(button);
+      }
+    });
 
-  if (loggedInUser()) {
-    const user = await getUser(loggedInUser());
-    if(user.isAdmin.data[0] === 1) {
-      console.log('user is admin');
-      const removeButton = document.createElement('button');
-      removeButton.className = 'setting-modal-button';
-      removeButton.id = 'remove-button';
-      removeButton.innerText = 'Remove';
+      const user = await getUser(loggedInUser());
+      if(user.isAdmin.data[0] === 1) {
+        const removeButton = document.createElement('button');
+        removeButton.className = 'setting-modal-button';
+        removeButton.id = 'remove-button';
+        removeButton.innerText = 'Remove';
 
-      removeButton.addEventListener('click', async () => {
-        const fetchOptions = {
-          method: 'POST',
-          headers: {
-            'Authorization': 'Bearer ' + sessionStorage.getItem('token'),
-          },
-        };
-        const response = await fetch(url + '/post/remove/' + id, fetchOptions);
-        return response.json();
-      })
-      buttonContainer.appendChild(removeButton);
-    }
+        removeButton.addEventListener('click', async () => {
+          const fetchOptions = {
+            method: 'POST',
+            headers: {
+              'Authorization': 'Bearer ' + sessionStorage.getItem('token'),
+            },
+          };
+          const response = await fetch(url + '/post/remove/' + postid, fetchOptions);
+          return response.json();
+        })
+        buttonContainer.appendChild(removeButton);
+      }
+    buttonContainer.appendChild(reportButton);
+    settingsModal.appendChild(modalClose);
+    settingsModal.appendChild(buttonContainer);
+    body.appendChild(settingsModal);
+  }else{
+    alert('You have to be logged in to do this action');
   }
-
-  buttonContainer.appendChild(reportButton);
-
-  settingsModal.appendChild(modalClose);
-  settingsModal.appendChild(buttonContainer);
-  body.appendChild(settingsModal);
 }
 
 

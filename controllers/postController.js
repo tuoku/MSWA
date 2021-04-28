@@ -60,13 +60,15 @@ const post_remove = async (req, res) => {
   }
 }
 //finish
-// const post_report = async (req, res) => {
-//   try{
-//
-//   } catch (e) {
-//
-//   }
-// }
+const post_report = async (req, res) => {
+  const postReport = await postModel.postReport(req.params.reportid, req.params.postid)
+  res.send(postReport);
+}
+
+const report_reasons = async (req, res) => {
+  const reportReasons = await postModel.reportReasons();
+  res.send(reportReasons);
+}
 
 module.exports = {
   posts_get,
@@ -78,4 +80,6 @@ module.exports = {
   post_create,
   crop_image,
   post_remove,
+  post_report,
+  report_reasons,
 };

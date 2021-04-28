@@ -133,6 +133,25 @@ const postRemove = async (post_id) => {
   }
 }
 
+const postReport = async (report_id, post_id) => {
+  try{
+    console.log('inside model: ' + report_id, post_id);
+    await promisePool.execute('INSERT INTO post_report (report_id, post_id) VALUES (?, ?);',
+        [report_id, post_id]);
+    return true;
+  }catch (e) {
+    return false;
+  }
+}
+
+const reportReasons = async () => {
+  try{
+    const [row] = await promisePool.query('SELECT * FROM report');
+    return row;
+  }catch (e) {
+
+  }
+}
 
 
 module.exports = {
@@ -143,4 +162,6 @@ module.exports = {
   getPostVoteCount,
   postCreate,
   postRemove,
+  postReport,
+  reportReasons,
 };
