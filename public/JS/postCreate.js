@@ -203,6 +203,11 @@ const openSettings = async (postid) => {
 
 //TODO: Couple of posts at a time not the whole database
 const createPosts = async (posts) => {
+  let listOfUserLiked = [];
+  if(loggedInUser()) {
+    const response = await fetch(url + '/post/userliked/' + loggedInUser());
+    listOfUserLiked = await response.json()
+  }
   if(posts.length === 0) {
     alert('No posts found')
   } else {
@@ -307,6 +312,16 @@ const createPosts = async (posts) => {
     postLikeButton.src = './ICONS/arrowup_icon.svg';
     postDislikeButton.src = './ICONS/arrowdown_icon.svg';
     postCommentButton.src = './ICONS/comment_icon.svg';
+
+    for await (const userPost of listOfUserLiked) {
+      if(post.post_id === userPost.post_id) {
+        if(userPost.liked.data.lastIndexOf(1) !== -1) {
+          postLikeButton.src = './ICONS/arrowup_icon_filled.svg';
+        } else {
+          postDislikeButton.src = './ICONS/arrowdown_icon_filled.svg';
+        }
+      }
+    }
 
     postLikeButtonDiv.appendChild(postLikeButton);
     postDislikeButtonDiv.appendChild(postDislikeButton);
