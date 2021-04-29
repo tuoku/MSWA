@@ -142,6 +142,7 @@ const openSettings = async (postid) => {
 
     reportButton.addEventListener('click', async () => {
       buttonContainer.innerHTML = '';
+      buttonContainer.style.top = '35vh';
       //List of reasons
       const reportReasons = (await (await fetch(
           url + '/post/report/reasons')).json());
@@ -153,6 +154,7 @@ const openSettings = async (postid) => {
 
         button.addEventListener('click', async () => {
           buttonContainer.innerHTML = '';
+          buttonContainer.style.top = '';
           buttonContainer.innerText = 'Thanks for reporting';
           const fetchOptions = {
             method: 'POST',
@@ -260,8 +262,6 @@ const createPosts = async (posts) => {
     const profilePic = (await getUser(post.owner_id)).profileFilename;
     posterProfilePicture.src = profilePicFolder + profilePic + '.jpg';
     posterProfilePicture.alt = 'Profile picture of post owner';
-    posterProfilePicture.width = '32';
-    posterProfilePicture.height = '32';
     postUserPictureDiv.appendChild(posterProfilePicture);
 
     //Top username of poster
@@ -426,6 +426,7 @@ const createPosts = async (posts) => {
           commentSubmit.setAttribute('type', 'submit');
           commentSubmit.value = 'Comment';
 
+          commentForm.id = 'comment-form';
           commentInputText.id = 'comment-input-text';
           commentInputText.name = 'jsonComment';
           commentSubmit.id = 'comment-submit';
