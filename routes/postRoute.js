@@ -44,6 +44,7 @@ router.get('/:id/votecount', postController.post_get_vote_count);
 router.get('/report/reasons', postController.report_reasons);
 router.get('/hashtag/:chars', postController.get_hashtags);
 router.get('/search/hashtag/:tagid', postController.post_get_by_hashtag);
+router.get('/userliked/:id', postController.post_get_liked_by_user);
 
 //POST
 router.post('/:postid/comment/:ownerid', passport.authenticate('jwt', {session: false}), jsonParser, postController.post_comment_upload);

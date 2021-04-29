@@ -108,6 +108,7 @@ loginForm.addEventListener('submit', async (event) => {
     loginButton.classList.add('hidden');
     document.body.style.overflow = 'scroll';
     alert('login success!')
+    getPosts()
   }
 })
 
