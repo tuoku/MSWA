@@ -56,6 +56,18 @@ const getAllPosts = async () => {
   }
 };
 
+const getPostsByHashtag = async (tagid) => {
+  try{
+    const [row] = await promisePool.query('SELECT * FROM post_tags WHERE tag_id = ?', [tagid]);
+    if(row.length === 1) {
+      const [rows] = await promisePool.query('SELECT * FROM user_post WHERE vet IS NULL AND post_id = ? ORDER BY vst DESC', [row[0].post_id])
+      return rows
+    }
+  }catch (e) {
+    console.error('getPostsByHashtag:', e.message);
+  }
+};
+
 const getPostComments = async (id) => {
   try {
     const [rows] = await promisePool.query('SELECT * FROM post_comment WHERE post_id = ?',
@@ -183,4 +195,5 @@ module.exports = {
   postReport,
   reportReasons,
   getTags,
+  getPostsByHashtag,
 };

@@ -185,9 +185,11 @@ const createLists = (array, prefix, fieldName) => {
         // insert a input field that will hold the current array item's value:
         b.innerHTML += "<input type='hidden' value='" + array[i].id + "'>";
         // execute a function when someone clicks on the item value (DIV element):
-        b.addEventListener("click", (e) => {
+        b.addEventListener("click", async (e) => {
           //closeAllLists();
-          //TODO: load posts matching clicked hashtag
+          const response = await fetch(url + '/post/search/hashtag/' + array[i].id)
+          const posts = await response.json();
+          await createPosts(posts);
         });
       }
       // make the matching letters bold:

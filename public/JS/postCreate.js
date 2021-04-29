@@ -74,7 +74,7 @@ userCreatePost.addEventListener('click', () => {
 const getPosts = async () => {
   const response = await fetch(url + '/post');
   const posts = await response.json();
-  createPosts(posts);
+  await createPosts(posts);
 };
 
 getPosts();
@@ -213,6 +213,10 @@ const openSettings = async (postid) => {
 
 //TODO: Couple of posts at a time not the whole database
 const createPosts = async (posts) => {
+  main.innerHTML = '';
+  if(posts.length === 0) {
+    alert('No posts found')
+  }
   for (const post of posts) {
     //Creates article elements which is container for post
     const postBody = document.createElement('article');
