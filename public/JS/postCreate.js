@@ -74,7 +74,7 @@ userCreatePost.addEventListener('click', () => {
 const getPosts = async () => {
   const response = await fetch(url + '/post');
   const posts = await response.json();
-  createPosts(posts);
+  await createPosts(posts);
 };
 
 getPosts();
@@ -154,18 +154,6 @@ const openSettings = async (postid) => {
         button.addEventListener('click', async () => {
           buttonContainer.innerHTML = '';
           buttonContainer.innerText = 'Thanks for reporting';
-
-          const closeButton = document.createElement('button');
-          closeButton.innerText = 'Close';
-
-          closeButton.addEventListener('click', () => {
-            settingsModal.classList.toggle('hidden');
-            settingsModal.remove();
-          });
-
-          button.appendChild(closeButton);
-          buttonContainer.appendChild(button);
-
           const fetchOptions = {
             method: 'POST',
             headers: {
@@ -213,6 +201,11 @@ const openSettings = async (postid) => {
 
 //TODO: Couple of posts at a time not the whole database
 const createPosts = async (posts) => {
+  if(posts.length === 0) {
+    alert('No posts found')
+  } else {
+    main.innerHTML = '';
+  }
   for (const post of posts) {
     //Creates article elements which is container for post
     const postBody = document.createElement('article');

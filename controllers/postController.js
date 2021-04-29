@@ -8,6 +8,12 @@ const posts_get = async (req, res) => {
   const postList = await postModel.getAllPosts();
   res.json(postList);
 }
+
+const post_get_by_hashtag = async (req, res) => {
+  const postList = await postModel.getPostsByHashtag(req.params.tagid);
+  res.json(postList);
+}
+
 const post_get_username = async (req, res) => {
   const postOwner = await userModel.getUser(req.params.id);
   res.json(postOwner);
@@ -86,4 +92,5 @@ module.exports = {
   post_report,
   report_reasons,
   get_hashtags,
+  post_get_by_hashtag,
 };
