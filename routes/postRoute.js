@@ -42,6 +42,7 @@ router.get('/owner/:id', postController.post_get_username);
 router.get('/comments/:id', postController.post_get_comments);
 router.get('/:id/votecount', postController.post_get_vote_count);
 router.get('/report/reasons', postController.report_reasons);
+router.get('/hashtag/:chars', postController.get_hashtags);
 
 //POST
 router.post('/:postid/comment/:ownerid', passport.authenticate('jwt', {session: false}), jsonParser, postController.post_comment_upload);

@@ -459,11 +459,13 @@ const createPosts = async (posts) => {
                 },
                 body: JSON.stringify(data),
               };
+              
               const response = await fetch(
                   url + '/post/' + post.post_id + '/comment/' + loggedInUser(),
                   fetchOptions);
-
+              
               if (await response) {
+                
                 const postCommentDiv = document.createElement('div');
                 const postCommentUsername = document.createElement('p');
                 const postCommentContent = document.createElement('p');
