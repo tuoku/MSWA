@@ -18,7 +18,7 @@ const dateTimeMaker = () => {
 // and uploading each tag into db
 // each tag is UNIQUE in db
 const parseTags = async (string, postID) => {
-  let tags = string.match(/#[\p{L}]+/ugi);
+  let tags = string.match(/#[^\s#]*/gmi);
   for(let tag of tags){
     try {
       await promisePool.query('INSERT INTO hashtag (name) VALUES (?)', [tag.replace('#','')]);
@@ -59,10 +59,11 @@ const getAllPosts = async () => {
 const getPostsByHashtag = async (tagid) => {
   try{
     const [row] = await promisePool.query('SELECT * FROM post_tags WHERE tag_id = ?', [tagid]);
-    if(row.length === 1) {
-      const [rows] = await promisePool.query('SELECT * FROM user_post WHERE vet IS NULL AND post_id = ? ORDER BY vst DESC', [row[0].post_id])
+    if(row.length > 0) {
+      const [rows] = await promisePool.query('SELECT * FROM user_post LEFT JOIN post_tags ON user_post.post_id = post_tags.post_id WHERE vet IS NULL AND post_tags.tag_id = ? ORDER BY vst DESC', [tagid])
       return rows
     }
+    return [];
   }catch (e) {
     console.error('getPostsByHashtag:', e.message);
   }

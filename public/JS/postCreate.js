@@ -213,9 +213,10 @@ const openSettings = async (postid) => {
 
 //TODO: Couple of posts at a time not the whole database
 const createPosts = async (posts) => {
-  main.innerHTML = '';
   if(posts.length === 0) {
     alert('No posts found')
+  } else {
+    main.innerHTML = '';
   }
   for (const post of posts) {
     //Creates article elements which is container for post
