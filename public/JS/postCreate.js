@@ -154,18 +154,6 @@ const openSettings = async (postid) => {
         button.addEventListener('click', async () => {
           buttonContainer.innerHTML = '';
           buttonContainer.innerText = 'Thanks for reporting';
-
-          const closeButton = document.createElement('button');
-          closeButton.innerText = 'Close';
-
-          closeButton.addEventListener('click', () => {
-            settingsModal.classList.toggle('hidden');
-            settingsModal.remove();
-          });
-
-          button.appendChild(closeButton);
-          buttonContainer.appendChild(button);
-
           const fetchOptions = {
             method: 'POST',
             headers: {
