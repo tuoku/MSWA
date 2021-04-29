@@ -53,7 +53,7 @@ main {
 }
 
 #homeBtn {
-    background-image: url('../ICONS/home.png');
+    background-image: url('../ICONS/home.svg');
     border-radius: 100%;
     height: 6vh;
     width: 6vh;
@@ -65,7 +65,7 @@ main {
 }
 
 #myProfileBtn {
-    background-image: url('../ICONS/profile.png');
+    background-image: url('../ICONS/profile.svg');
     border-radius: 100%;
     height: 6vh;
     width: 6vh;
@@ -156,7 +156,7 @@ input {
 
 #headerSearch {
     background-color: white;
-    background-image: url('../ICONS/search.png');
+    background-image: url('../ICONS/search.svg');
     background-size: contain;
     background-repeat: no-repeat;
     padding-left: 40px;
