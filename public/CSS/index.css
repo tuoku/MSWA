@@ -9,7 +9,7 @@ body {
 
 header {
     display: flex;
-    justify-content: end;
+    justify-content: flex-end;
     align-items: center;
     position: absolute;
     top: 0;
@@ -216,4 +216,14 @@ input {
 .imgWithPlaceholder {
     background: url('../IMG/placeholder.jpg') no-repeat scroll 0 0;
 }
-
+.headerIcon h1 {
+    font-family: 'Parkway Lush', sans-serif;
+    text-align:center;
+}
+.headerIcon {
+    position: absolute;
+    left: 50%;
+    width: 15%;
+    margin-left: -7.5%;
+    line-height: 0;
+}
