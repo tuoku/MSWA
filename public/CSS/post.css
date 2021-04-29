@@ -208,27 +208,34 @@ a {
     align-items: center;
 }
 
-@media only screen and (min-width: 1000px) {
-    .post {
-        transform: scale(1.2);
-        margin-top: 6vh;
-        margin-bottom: 15vh;
-        font-size: 24px;
-    }
-    .modal-container {
-        width: 384px;
-        margin-top: -192px;
-        margin-left: -192px;
-    }
-    .setting-modal-button {
-        font-size: 1.1em;
-    }
-}
+/*@media only screen and (min-width: 1000px) {*/
+/*    .post {*/
+/*        transform: scale(1.2);*/
+/*        margin-top: 0;*/
+/*        margin-bottom: 25vh;*/
+/*        font-size: 24px;*/
+/*    }*/
+
+/*    .modal-container {*/
+/*        width: 384px;*/
+/*        margin-top: -192px;*/
+/*        margin-left: -192px;*/
+/*    }*/
+
+/*    .setting-modal-button {*/
+/*        font-size: 1.1em;*/
+/*    }*/
+
+/*    main {*/
+/*        margin-top: 30vh;*/
+/*    }*/
+/*}*/
 
 @media only screen and (max-width: 500px) {
     .post, main, div {
         width: 100%;
     }
+
     .post-content img {
         width: 100%;
         height: auto;
