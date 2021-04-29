@@ -25,6 +25,7 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use('/auth', authRoute);
 app.use('/post', postRoute);
+app.use('/user', userRoute);
 app.use('/thumbnails', express.static('thumbnails'));
 app.use('/uploads', express.static('./uploads'));
 app.use('/user', userRoute);

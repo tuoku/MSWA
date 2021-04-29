@@ -54,6 +54,25 @@ const crop_image = async (req, res, next) => {
   }
 }
 
+const post_remove = async (req, res) => {
+  if(req.user[0].isAdmin) {
+    const postRemove = await postModel.postRemove(req.params.id);
+    res.send(postRemove);
+  } else {
+    res.status(400).json({error: e.message});
+  }
+}
+
+const post_report = async (req, res) => {
+  const postReport = await postModel.postReport(req.params.reportid, req.params.postid)
+  res.send(postReport);
+}
+
+const report_reasons = async (req, res) => {
+  const reportReasons = await postModel.reportReasons();
+  res.send(reportReasons);
+}
+
 module.exports = {
   posts_get,
   post_get_username,
@@ -63,5 +82,8 @@ module.exports = {
   post_get_vote_count,
   post_create,
   crop_image,
+  post_remove,
+  post_report,
+  report_reasons,
   get_hashtags,
 };
