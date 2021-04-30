@@ -5,6 +5,7 @@ const main = document.querySelector('main');
 
 //Bottom navs center button
 const userCreatePost = document.getElementById('addPostBtn');
+const desktopUserCreatePost = document.getElementById('dAddPostBtn');
 userCreatePost.addEventListener('click', () => {
   const createPostModal = document.createElement('div');
   createPostModal.className = 'modal';
@@ -70,6 +71,70 @@ userCreatePost.addEventListener('click', () => {
   body.appendChild(createPostModal);
 });
 
+desktopUserCreatePost.addEventListener('click', () => {
+  const createPostModal = document.createElement('div');
+  createPostModal.className = 'modal';
+  const modalClose = document.createElement('button');
+  modalClose.className = 'modalClose';
+  modalClose.innerText = 'x';
+
+  modalClose.addEventListener('click', () => {
+    createPostModal.classList.toggle('hidden');
+    createPostModal.remove();
+  });
+
+  const postCreateContainer = document.createElement('div');
+  postCreateContainer.className = 'modal-container';
+  postCreateContainer.id = 'post-create-container';
+
+  //Form for post creation
+  const form = document.createElement('FORM');
+  form.id = 'post-create-form';
+  form.enctype = 'multipart/form-data';
+
+  const contentInput = document.createElement('INPUT');
+  contentInput.setAttribute('type', 'file');
+  contentInput.setAttribute('accept', 'image/*');
+  contentInput.setAttribute('placeholder', 'Choose File');
+  contentInput.setAttribute('name', 'content');
+  contentInput.required = true;
+
+  const captionInput = document.createElement('INPUT');
+  captionInput.setAttribute('type', 'text');
+  captionInput.setAttribute('placeholder', 'Caption');
+  captionInput.setAttribute('name', 'caption');
+
+  const postCreateSubmit = document.createElement('INPUT');
+  postCreateSubmit.setAttribute('type', 'submit');
+
+  form.appendChild(contentInput);
+  form.appendChild(captionInput);
+  form.appendChild(postCreateSubmit);
+
+  form.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const fd = new FormData(form);
+    const user = await getUser(loggedInUser());
+    const fetchOptions = {
+      method: 'POST',
+      headers: {
+        'Authorization': 'Bearer ' + sessionStorage.getItem('token'),
+      },
+      body: fd,
+    };
+    const response = await fetch(url + '/post/upload/' + user.id, fetchOptions);
+    const json = await response.json();
+    if (json.error) {
+      alert(json.error);
+    }
+  });
+
+  postCreateContainer.appendChild(form);
+
+  createPostModal.appendChild(modalClose);
+  createPostModal.appendChild(postCreateContainer);
+  body.appendChild(createPostModal);
+});
 //Fetches all posts from database and calls function to show them
 const getPosts = async () => {
   const response = await fetch(url + '/post');

@@ -43,6 +43,7 @@ router.get('/comments/:id', postController.post_get_comments);
 router.get('/:id/votecount', postController.post_get_vote_count);
 router.get('/report/reasons', postController.report_reasons);
 router.get('/hashtag/:chars', postController.get_hashtags);
+router.get('/hashtag/get/popular', postController.get_popular_hashtags);
 router.get('/search/hashtag/:tagid', postController.post_get_by_hashtag);
 router.get('/userliked/:id', postController.post_get_liked_by_user);
 
