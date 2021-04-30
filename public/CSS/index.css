@@ -288,7 +288,7 @@ input {
     }
 
     #headerBtns {
-        display: ruby;
+        display: flex;
         position: absolute;
         left: calc(50vw + 200px);
     }
