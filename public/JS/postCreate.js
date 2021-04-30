@@ -268,6 +268,11 @@ const openSettings = async (postid) => {
 
 //TODO: Couple of posts at a time not the whole database
 const createPosts = async (posts) => {
+  let listOfUserLiked = [];
+  if(loggedInUser()) {
+    const response = await fetch(url + '/post/userliked/' + loggedInUser());
+    listOfUserLiked = await response.json()
+  }
   if(posts.length === 0) {
     alert('No posts found')
   } else {
@@ -337,7 +342,7 @@ const createPosts = async (posts) => {
 
     //Top right settings icon/button
     const postSettingsIcon = document.createElement('img');
-    postSettingsIcon.src = './ICONS/settings_icon.png';
+    postSettingsIcon.src = './ICONS/settings_icon.svg';
     postSettingsDiv.appendChild(postSettingsIcon);
 
     //Post content
@@ -369,9 +374,19 @@ const createPosts = async (posts) => {
     const postLikeButton = document.createElement('img');
     const postDislikeButton = document.createElement('img');
     const postCommentButton = document.createElement('img');
-    postLikeButton.src = './ICONS/arrowup_icon.png';
-    postDislikeButton.src = './ICONS/arrowdown_icon.png';
-    postCommentButton.src = './ICONS/comment_icon.png';
+    postLikeButton.src = './ICONS/arrowup_icon.svg';
+    postDislikeButton.src = './ICONS/arrowdown_icon.svg';
+    postCommentButton.src = './ICONS/comment_icon.svg';
+
+    for await (const userPost of listOfUserLiked) {
+      if(post.post_id === userPost.post_id) {
+        if(userPost.liked.data.lastIndexOf(1) !== -1) {
+          postLikeButton.src = './ICONS/arrowup_icon_filled.svg';
+        } else {
+          postDislikeButton.src = './ICONS/arrowdown_icon_filled.svg';
+        }
+      }
+    }
 
     postLikeButtonDiv.appendChild(postLikeButton);
     postDislikeButtonDiv.appendChild(postDislikeButton);
@@ -441,12 +456,16 @@ const createPosts = async (posts) => {
         votePost(post.post_id, loggedInUser(), 1).then((response) => {
           if (response === 1) {
             postLikes.innerText = (startingValue + 1).toString() + ' likes';
+            postLikeButton.src = './ICONS/arrowup_icon_filled.svg';
           }
           if (response === 0) {
             postLikes.innerText = (startingValue - 1).toString() + ' likes';
+            postLikeButton.src = './ICONS/arrowup_icon.svg';
           }
           if (response === 2) {
             postLikes.innerText = (startingValue + 2).toString() + ' likes';
+            postLikeButton.src = './ICONS/arrowup_icon_filled.svg';
+            postDislikeButton.src = './ICONS/arrowdown_icon.svg';
           }
         });
       } else {
@@ -460,12 +479,16 @@ const createPosts = async (posts) => {
         votePost(post.post_id, loggedInUser(), 0).then((response) => {
           if (response === 1) {
             postLikes.innerText = (startingValue - 1).toString() + ' likes';
+            postDislikeButton.src = './ICONS/arrowdown_icon_filled.svg';
           }
           if (response === 0) {
             postLikes.innerText = (startingValue + 1).toString() + ' likes';
+            postDislikeButton.src = './ICONS/arrowdown_icon.svg';
           }
           if (response === 2) {
             postLikes.innerText = (startingValue - 2).toString() + ' likes';
+            postLikeButton.src = './ICONS/arrowup_icon.svg';
+            postDislikeButton.src = './ICONS/arrowdown_icon_filled.svg';
           }
         });
       } else {
@@ -476,10 +499,12 @@ const createPosts = async (posts) => {
     postCommentButtonDiv.addEventListener('click', () => {
       if (loggedInUser()) {
         //Toggleable commenting field
+        postCommentButton.src = './ICONS/comment_icon_filled.svg';
         if (document.getElementById('write-comment-box' + post.post_id)) {
           const commentBox = document.getElementById(
               'write-comment-box' + post.post_id);
           commentBox.remove();
+          postCommentButton.src = './ICONS/comment_icon.svg';
         } else {
           const newCommentBox = document.createElement('div');
           newCommentBox.id = 'write-comment-box' + post.post_id;
@@ -522,7 +547,7 @@ const createPosts = async (posts) => {
               const response = await fetch(
                   url + '/post/' + post.post_id + '/comment/' + loggedInUser(),
                   fetchOptions);
-              
+              postCommentButton.src = './ICONS/comment_icon.svg';
               if (await response) {
                 
                 const postCommentDiv = document.createElement('div');

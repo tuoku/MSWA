@@ -29,6 +29,11 @@ const post_get_vote_count = async (req, res) => {
   res.json(postVoteCount);
 }
 
+const post_get_liked_by_user = async (req, res) => {
+  const posts = await postModel.getPostsLikedByUser(req.params.id);
+  res.json(posts);
+}
+
 const post_vote = async (req, res) => {
   const voteValue = await postModel.votePost(req);
   res.json(voteValue);
@@ -100,4 +105,5 @@ module.exports = {
   get_hashtags,
   post_get_by_hashtag,
   get_popular_hashtags,
+  post_get_liked_by_user,
 };

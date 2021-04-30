@@ -91,6 +91,16 @@ const getPostVoteCount = async (id) => {
   }
 };
 
+const getPostsLikedByUser = async (id) => {
+  try{
+    const [rows] = await promisePool.query(
+        'SELECT user_post.post_id, post_like.liked FROM user_post LEFT JOIN post_like ON user_post.post_id = post_like.post_id WHERE post_like.user_id = ?', [id])
+    return rows;
+  }catch (e) {
+    console.error('getPostsLikedByUser:', e.message);
+  }
+}
+
 const votePost = async (req) => {
   try {
     //req.body.vote is a STRING, not INT
@@ -209,4 +219,5 @@ module.exports = {
   getTags,
   getPostsByHashtag,
   popularTags,
+  getPostsLikedByUser,
 };
