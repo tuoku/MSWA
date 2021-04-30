@@ -12,6 +12,11 @@ const postsButton = document.getElementById('postsBtn');
 
 let mUser
 
+if(!(sessionStorage.getItem('token'))){
+  document.getElementById('dAddPostBtn').style.display = 'none';
+  desktopMyProfileBtn.style.display = 'none';
+}
+
 
 // get the requested users id from url params
 const queryString = window.location.search;

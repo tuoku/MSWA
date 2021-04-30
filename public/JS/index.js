@@ -15,6 +15,11 @@ const trendingTags = document.getElementById('popTagContainer');
 // Array for storing users fetched during searchbar input
 let userSearchArray;
 
+if(!(sessionStorage.getItem('token'))){
+  document.getElementById('dAddPostBtn').style.display = 'none';
+  desktopMyProfileBtn.style.display = 'none';
+}
+
 // url for local development, change on production server
 const url = 'http://localhost:3000'
 
@@ -65,6 +70,7 @@ const logOut = async () => {
     // and switch logout button back to login button
     bottomNav.classList.add('hidden');
     loginButton.classList.remove('hidden');
+    location.reload()
 
   }
   catch (e) {
@@ -98,6 +104,7 @@ event.preventDefault()
     bottomNav.classList.remove('hidden');
     loginButton.classList.add('hidden');
     document.body.style.overflow = 'scroll';
+    location.reload()
   }
 });
 
@@ -126,6 +133,7 @@ loginForm.addEventListener('submit', async (event) => {
     loginButton.classList.add('hidden');
     document.body.style.overflow = 'scroll';
     alert('login success!')
+    location.reload()
     getPosts()
   }
 })
@@ -272,4 +280,5 @@ desktopHomeBtn.addEventListener('click', ev => {
 if (sessionStorage.getItem('token')) {
   bottomNav.classList.remove('hidden');
   loginButton.classList.add('hidden');
+
 }
