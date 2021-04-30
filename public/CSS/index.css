@@ -229,10 +229,14 @@ input {
 .imgWithPlaceholder {
     background: url('../IMG/placeholder.jpg') no-repeat scroll 0 0;
 }
-.headerIcon h1 {
+.headerIcon a {
     font-family: 'Parkway Lush', sans-serif;
     text-align:center;
+    font-size: 40px;
+    text-decoration: none;
+    color: black;
 }
+
 .headerIcon {
     position: absolute;
     left: 50%;
@@ -240,6 +244,8 @@ input {
     margin-left: -7.5%;
     line-height: 0;
 }
+
+
 
 @media only screen and (min-width: 1000px){
     main {
