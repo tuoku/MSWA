@@ -193,4 +193,11 @@ nav {
     #profilePic {
         width: 150px;
     }
+
+    .autocomplete {
+        float: right;
+        position: relative;
+        right: calc(50vw - 275px);
+        width: 400px;
+    }
 }

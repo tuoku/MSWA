@@ -305,7 +305,7 @@ input {
     #headerSearch:focus {
         width: 400px;
     }
-    #dMyProfileBtn, #dAddPostBtn, #dHomeBtn {
+    #dMyProfileBtn, #dAddPostBtn {
         display: block;
     }
 
