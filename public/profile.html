@@ -12,8 +12,20 @@
 </head>
 <body>
     <header>
-        <input type="text" placeholder="Search #hashtags or @users" id="headerSearch">
-        <button id="loginBtn"></button>
+        <div class="autocomplete">
+            <input type="text" placeholder="Search #hashtags or @users" id="headerSearch">
+        </div>
+        <div id="headerBtns">
+            <button id="dAddPostBtn" class="hidden"></button>
+            <button id="dHomeBtn" class="hidden"></button>
+            <button id="dMyProfileBtn" class="hidden"></button>
+            <button id="loginBtn"></button>
+        </div>
+        <div class="headerIcon">
+            <h1>
+                Artster
+            </h1>
+        </div>
         <div id="menuItems">
             <a href="#">item</a>
             <a href="#">item</a>
