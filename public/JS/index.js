@@ -7,7 +7,10 @@ const loginForm = document.getElementById('loginForm');
 const bottomNav = document.getElementById('bottomNav');
 const searchBar = document.getElementById('headerSearch');
 const myProfileBtn = document.getElementById('myProfileBtn');
+const desktopMyProfileBtn = document.getElementById('dMyProfileBtn');
 const homeBtn = document.getElementById('homeBtn');
+const desktopHomeBtn = document.getElementById('dHomeBtn');
+const trendingTags = document.getElementById('popTagContainer');
 
 // Array for storing users fetched during searchbar input
 let userSearchArray;
@@ -29,6 +32,21 @@ loginButton.addEventListener('click', ev => {
   document.body.style.overflow = 'hidden';
 });
 
+const getPopTags = async () => {
+  let response = await fetch(url + '/post/hashtag/get/popular')
+  let tags = await response.json()
+  const i = document.createElement('ul');
+  console.dir(tags)
+  for (let tag of tags) {
+    const ii = '#' + tag.tag
+    const iii = document.createElement('li')
+    iii.innerHTML = `<a href="#">${ii}</a>`
+    i.appendChild(iii)
+  }
+trendingTags.appendChild(i)
+
+}
+getPopTags()
 const logOut = async () => {
   try {
     // logging out requires token for authentication
@@ -235,7 +253,16 @@ myProfileBtn.addEventListener('click', (ev => {
   window.location.href = 'profile.html?id=' + user.id
 }))
 
+desktopMyProfileBtn.addEventListener('click', (ev => {
+  const user = parseJwt(sessionStorage.getItem('token'))
+  window.location.href = 'profile.html?id=' + user.id
+}))
+
 homeBtn.addEventListener('click', ev => {
+  window.location.href = 'index.html'
+})
+
+desktopHomeBtn.addEventListener('click', ev => {
   window.location.href = 'index.html'
 })
 

@@ -14,8 +14,15 @@
 
     <!-- header -->
     <header>
+        <div class="autocomplete">
         <input type="text" placeholder="Search #hashtags or @users" id="headerSearch">
-        <button id="loginBtn"></button>
+        </div>
+        <div id="headerBtns">
+             <button id="dAddPostBtn" class="hidden"></button>
+            <button id="dHomeBtn" class="hidden"></button>
+            <button id="dMyProfileBtn" class="hidden"></button>
+            <button id="loginBtn"></button>
+        </div>
         <div class="headerIcon">
             <h1>
                 Artster
@@ -25,6 +32,11 @@
 
     <!-- load posts here (inside some container) -->
     <main></main>
+    <aside>
+        <div id="popTagContainer" class="hidden">
+            <h4>Trending hashtags</h4>
+        </div>
+    </aside>
 
     <!-- bottom navigation bar, shown only to logged in users -->
     <nav id="bottomNav" class="hidden">

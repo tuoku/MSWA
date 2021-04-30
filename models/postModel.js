@@ -184,6 +184,17 @@ const reportReasons = async () => {
   }
 }
 
+const popularTags = async () => {
+  try {
+    const [row] = await promisePool.query('SELECT hashtag.name AS tag, COUNT(post_tags.tag_id) AS count FROM hashtag LEFT JOIN post_tags ON id = post_tags.tag_id GROUP BY tag ORDER BY count DESC LIMIT 8');
+    console.log(row)
+    return row;
+  }catch (e) {
+    console.error('popularTags:', e.message);
+  }
+}
+
+
 
 module.exports = {
   getAllPosts,
@@ -197,4 +208,5 @@ module.exports = {
   reportReasons,
   getTags,
   getPostsByHashtag,
+  popularTags,
 };

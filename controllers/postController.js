@@ -79,6 +79,12 @@ const report_reasons = async (req, res) => {
   res.send(reportReasons);
 }
 
+const get_popular_hashtags = async (req, res) => {
+  const tags = await postModel.popularTags();
+  console.log(tags)
+  res.send(tags);
+};
+
 module.exports = {
   posts_get,
   post_get_username,
@@ -93,4 +99,5 @@ module.exports = {
   report_reasons,
   get_hashtags,
   post_get_by_hashtag,
+  get_popular_hashtags,
 };
