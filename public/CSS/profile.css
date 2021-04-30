@@ -173,3 +173,24 @@ nav {
 #saved {
     display: none;
 }
+
+@media only screen and (min-width: 1000px){
+    #profileContent {
+        width: 800px;
+        margin: auto;
+    }
+
+    .feedPic {
+        width: 200px;
+        height: 200px;
+        margin: 10px;
+    }
+
+    .feeds {
+        justify-content: center;
+    }
+
+    #profilePic {
+        width: 150px;
+    }
+}
