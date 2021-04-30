@@ -61,6 +61,10 @@ userCreatePost.addEventListener('click', () => {
     const json = await response.json();
     if (json.error) {
       alert(json.error);
+    } else {
+      alert('Post was successfully added');
+      createPostModal.remove();
+      await getPosts()
     }
   });
 
@@ -126,6 +130,10 @@ desktopUserCreatePost.addEventListener('click', () => {
     const json = await response.json();
     if (json.error) {
       alert(json.error);
+    } else {
+      alert('Post was successfully added');
+      createPostModal.remove();
+      await getPosts()
     }
   });
 
@@ -355,6 +363,26 @@ const createPosts = async (posts) => {
     //Caption text
     const postCaption = document.createElement('p');
     postCaption.className = 'hide-caption';
+
+    // if(post.caption.includes('#')) {
+    //   // console.dir(post.caption.match(/#[^\s#]*/gmi))
+    //   for(const tag of post.caption.match(/#[^\s#]*/gmi)) {
+    //     const re = new RegExp("("+tag+")","g");
+    //     postCaption.innerHTML = postCaption.innerHTML.replace(re, `<a href=${tag}>`)
+        // tag.addEventListener('click', async () => {
+        //   const tagSearchResp = await fetch(url + '/post/hashtag/' + tag.substring(1, tag.length));
+        //   const tagid = tagSearchResp.id
+        //   const response = await fetch(url + '/post/search/hashtag/' + tagid)
+        //   console.dir(await response.json())
+        // })
+        // let response = await fetch(url + '/post/hashtag/' + tag.substring(1, tag.length));
+        // console.dir(await response.json());
+    //   }
+    // }
+    // if(post.caption.includes('@')) {
+    //
+    // }
+
     postCaption.innerText = post.caption;
 
     //This creates Show more "button"
