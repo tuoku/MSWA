@@ -126,6 +126,18 @@
             </form>
         </div>
     </div>
+    <div id="editModal" class="modal hidden">
+        <button class="modalClose">x</button>
+        <div class="form">
+            <form id="editForm">
+                <label for="profileUpload">Change picture:</label>
+                <input type="file" id="profileUpload" name="img" accept="image/*">
+                <label for="bioEdit">Edit bio text:</label>
+                <textarea type="text" placeholder="Enter bio text" id="bioEdit" name="bioText" rows="10" cols="50"></textarea>
+                <button class="submitBtn">Save</button>
+            </form>
+        </div>
+    </div>
     <script src="JS/index.js"></script>
     <script src="JS/serialize.js"></script>
     <script src="JS/profile.js"></script>

@@ -59,9 +59,31 @@ const getUsersByFirstChars = async (letters) => {
   }
 }
 
+const updateProfile = async (user, file, body) => {
+  console.log(user,file,body)
+  if(file){
+  try {
+    const [rows] = await promisePool.execute(
+        'UPDATE user SET bioText = ?, profileFilename = ? WHERE id = ?', [body.bioText, file.filename, user]);
+    return rows;
+  } catch (e) {
+    console.log('updateProfile', e.message);
+  }
+  } else {
+    try {
+      const [rows] = await promisePool.execute(
+          'UPDATE user SET bioText = ? WHERE id = ?', [body.bioText, user]);
+      return rows;
+    } catch (e) {
+      console.log('updateProfile', e.message);
+    }
+  }
+}
+
 module.exports = {
   getUser,
   addUser,
   getUserLogin,
   getUsersByFirstChars,
+  updateProfile,
 };

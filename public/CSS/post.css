@@ -41,6 +41,7 @@
     height: 10vw;
     max-width: 38px;
     max-height: 38px;
+    object-fit: cover;
 }
 
 #post-user-username {

@@ -336,9 +336,10 @@ const createPosts = async (posts) => {
 
     //Mini profile picture top left corner of post
     const posterProfilePicture = document.createElement('img');
-    const profilePicFolder = './IMG/';
+    const profilePicFolder = url + '/uploads/profile/';
     const profilePic = (await getUser(post.owner_id)).profileFilename;
-    posterProfilePicture.src = profilePicFolder + profilePic + '.jpg';
+    console.log('profilePic' + profilePic)
+    posterProfilePicture.src = profilePicFolder + profilePic;
     posterProfilePicture.alt = 'Profile picture of post owner';
     postUserPictureDiv.appendChild(posterProfilePicture);
 
