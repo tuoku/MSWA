@@ -46,10 +46,11 @@ header {
 }
 
 #profilePic {
-    max-height:25vw;
-    max-width: 20vw;
+    height:20vw;
+    width: 20vw;
     border-radius: 100%;
     border: 5px solid white;
+    object-fit: cover;
 }
 
 .feeds {
@@ -174,6 +175,11 @@ nav {
     display: none;
 }
 
+textarea {
+    resize: none;
+    max-width: 90%;
+}
+
 @media only screen and (min-width: 1000px){
     #profileContent {
         width: 800px;
@@ -192,6 +198,7 @@ nav {
 
     #profilePic {
         width: 150px;
+        height: 150px;
     }
 
     .autocomplete {

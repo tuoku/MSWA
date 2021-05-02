@@ -16,7 +16,13 @@ const getById = async (req, res) => {
   }
 }
 
+const update_profile = async (req, res) => {
+  const resp = await userModel.updateProfile(req.params.id, req.file, req.body);
+  res.json(resp);
+}
+
 module.exports = {
   findByChars,
   getById,
+  update_profile,
 };

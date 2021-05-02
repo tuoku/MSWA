@@ -8,6 +8,10 @@ const tabs = document.getElementsByClassName('tabs');
 const guestPostTitle = document.getElementById('guestFeedTitle');
 const vSeparator = document.getElementById('vSeparator');
 const postsButton = document.getElementById('postsBtn');
+const editModal = document.getElementById('editModal');
+const editBio = document.getElementById('bioEdit');
+const editForm = document.getElementById('editForm');
+const profilePic = document.getElementById('profilePic');
 
 
 let mUser
@@ -35,6 +39,7 @@ init().then( () => {
   usernameField.innerHTML = `<strong> ${mUser.username} </strong>`
   followerAmountField.innerHTML = `<strong> ${mUser.followers} </strong> <br> followers`
   bioField.innerHTML = mUser.bioText
+  profilePic.src = url + '/uploads/profile/' + mUser.profileFilename
   try {
     let token = sessionStorage.getItem('token')
     if(token) {
@@ -79,6 +84,34 @@ const enableActions = () => {
   // set default view to Posts
   postsButton.click()
 }
+
+followButton.addEventListener('click', () => {
+  if(followButton.innerText === 'Edit profile'){
+    editModal.classList.toggle('hidden');
+    editBio.innerText = bioField.innerHTML
+  }
+});
+
+editForm.addEventListener('submit', async (event) => {
+  event.preventDefault()
+  const user = parseJwt(sessionStorage.getItem('token'))
+  const fd = new FormData(editForm);
+  const fetchOptions = {
+    method: 'PUT',
+    headers: {
+      'Authorization': 'Bearer ' + sessionStorage.getItem('token'),
+    },
+    body: fd,
+  };
+  const response = await fetch(url + '/user/update/' + user.id, fetchOptions);
+  const json = await response.json();
+  if (json.error) {
+    alert(json.error);
+  } else {
+    alert('success');
+    location.reload()
+  }
+})
 
 const openTab = (evt, tab) => {
   // Declare all variables
