@@ -177,6 +177,12 @@ a {
     color: black;
 }
 
+.hashtag {
+    color: dodgerblue;
+    text-decoration: underline;
+    cursor: pointer;
+}
+
 /* MODAL */
 
 .modal-container {
