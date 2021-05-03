@@ -80,10 +80,47 @@ const updateProfile = async (user, file, body) => {
   }
 }
 
+const follow = async (follower, follows) => {
+  try {
+    const [rows] = await promisePool.execute(
+        'INSERT INTO user_followed (follower_id, follows_id) VALUES (?, ?)', [follower, follows]
+    )
+    return rows;
+  } catch (e){
+    console.log('follow ' + e.message)
+  }
+}
+
+const isFollowing = async (follower, follows) => {
+  console.log( follower, follows)
+  try {
+    const [rows] = await promisePool.execute(
+        'SELECT * FROM user_followed WHERE follower_id = ? AND follows_id = ?', [follower, follows]
+    )
+    return rows;
+  } catch (e) {
+    console.log(e.message)
+  }
+}
+
+const unfollow = async (follower, follows) => {
+  try {
+    const [rows] = await promisePool.execute(
+        'DELETE FROM user_followed WHERE follower_id = ? AND follows_id = ?', [follower, follows]
+    )
+    return rows;
+  } catch (e){
+    console.log('follow ' + e.message)
+  }
+}
+
 module.exports = {
   getUser,
   addUser,
   getUserLogin,
   getUsersByFirstChars,
   updateProfile,
+  follow,
+  isFollowing,
+  unfollow,
 };
