@@ -596,7 +596,7 @@ const createPosts = async (posts) => {
                 postCommentContent.id = 'post-comment-content';
 
                 postCommentUsername.innerText = (await getUser(loggedInUser())).username;
-                postCommentContent.innerText = commentInputText.value;
+                postCommentContent.innerText = commentInputText.value.substring(0, 255);
 
                 postCommentDiv.appendChild(postCommentUsername);
                 postCommentDiv.appendChild(postCommentContent);
@@ -605,7 +605,7 @@ const createPosts = async (posts) => {
                 console.log('something went wrong');
               }
             } else {
-              alert('Comment something, bruh comeon');
+              alert('Submitted comment was empty');
             }
           });
         }
