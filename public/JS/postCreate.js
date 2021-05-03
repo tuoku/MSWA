@@ -274,6 +274,20 @@ const openSettings = async (postid) => {
   }
 };
 
+const getPostsByHashtag = async (id) => {
+  const response = await fetch(url + '/post/search/hashtag/' + id)
+  const posts = await response.json();
+  return await createPosts(posts);
+}
+
+const onHashtagClicked = async (hashtag) => {
+  const hashTagText = hashtag.replace('#', '')
+  const tagResponse = await fetch(url + '/post/hashtag/' + hashTagText);
+  const tagJson = await tagResponse.json()
+  const tagId = tagJson[0].id;
+  await getPostsByHashtag(tagId)
+}
+
 //TODO: Couple of posts at a time not the whole database
 const createPosts = async (posts) => {
   let listOfUserLiked = [];
@@ -364,27 +378,22 @@ const createPosts = async (posts) => {
     //Caption text
     const postCaption = document.createElement('p');
     postCaption.className = 'hide-caption';
+    postCaption.innerText = post.caption;
 
-    // if(post.caption.includes('#')) {
-    //   // console.dir(post.caption.match(/#[^\s#]*/gmi))
-    //   for(const tag of post.caption.match(/#[^\s#]*/gmi)) {
-    //     const re = new RegExp("("+tag+")","g");
-    //     postCaption.innerHTML = postCaption.innerHTML.replace(re, `<a href=${tag}>`)
-        // tag.addEventListener('click', async () => {
-        //   const tagSearchResp = await fetch(url + '/post/hashtag/' + tag.substring(1, tag.length));
-        //   const tagid = tagSearchResp.id
-        //   const response = await fetch(url + '/post/search/hashtag/' + tagid)
-        //   console.dir(await response.json())
-        // })
-        // let response = await fetch(url + '/post/hashtag/' + tag.substring(1, tag.length));
-        // console.dir(await response.json());
-    //   }
-    // }
+    if(post.caption.includes('#')) {
+      for(let hashtag of post.caption.match(/#[^\s#]*/gmi)) {
+        const hashtagLink = document.createElement('a');
+        hashtagLink.innerText = hashtag
+        hashtagLink.className = 'hashtag'
+        hashtagLink.setAttribute("onclick", "onHashtagClicked('" + hashtag +"')")
+        postCaption.replaceWith(hashtagLink)
+        console.log(hashtagLink.outerHTML)
+        postCaption.innerHTML = postCaption.innerHTML.replace(hashtag, hashtagLink.outerHTML)
+      }
+    }
     // if(post.caption.includes('@')) {
     //
     // }
-
-    postCaption.innerText = post.caption;
 
     //This creates Show more "button"
     const showMoreLink = document.createElement('a');

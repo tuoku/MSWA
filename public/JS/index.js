@@ -45,7 +45,10 @@ const getPopTags = async () => {
   for (let tag of tags) {
     const ii = '#' + tag.tag
     const iii = document.createElement('li')
-    iii.innerHTML = `<a href="#">${ii}</a>`
+    iii.setAttribute("onclick", "onHashtagClicked('" + ii +"')")
+    iii.innerText = ii
+    iii.className = 'hashtag'
+    // iii.innerHTML = `<a href="">${ii}</a>`
     i.appendChild(iii)
   }
 trendingTags.appendChild(i)
@@ -214,9 +217,7 @@ const createLists = (array, prefix, fieldName) => {
         // execute a function when someone clicks on the item value (DIV element):
         b.addEventListener("click", async (e) => {
           //closeAllLists();
-          const response = await fetch(url + '/post/search/hashtag/' + array[i].id)
-          const posts = await response.json();
-          await createPosts(posts);
+          await getPostsByHashtag(array[i]);
         });
       }
       // make the matching letters bold:
