@@ -15,6 +15,8 @@ const profilePic = document.getElementById('profilePic');
 
 
 let mUser
+let isFollowing
+let followAmount
 
 if(!(sessionStorage.getItem('token'))){
   document.getElementById('dAddPostBtn').style.display = 'none';
@@ -32,20 +34,33 @@ const init = async () => {
   const response = await fetch(url + '/user/' + userId)
   const user = await response.json()
   mUser = user[0]
+  followAmount = mUser.followers
+  try {
+    const following = await fetch(
+        url + '/user/follows/' + parseJwt(sessionStorage.getItem('token')).id +
+        '/' + userId)
+    isFollowing = (await following.json()).follows
+    console.log(isFollowing)
+  } catch (e) {
+    console.log(e.message)
+  }
 }
 
 // after fetched update the document with the information
 init().then( () => {
   usernameField.innerHTML = `<strong> ${mUser.username} </strong>`
-  followerAmountField.innerHTML = `<strong> ${mUser.followers} </strong> <br> followers`
+  followerAmountField.innerHTML = `<strong> ${followAmount} </strong> <br> followers`
   bioField.innerHTML = mUser.bioText
   profilePic.src = url + '/uploads/profile/' + mUser.profileFilename
+  if (isFollowing){
+    followButton.innerText = 'Unfollow'
+  }
   try {
     let token = sessionStorage.getItem('token')
     if(token) {
       let user = parseJwt(token)
       if(user.id === mUser.id) {
-        // user is viewing his own profile
+        // user is viewing their own profile
         // enable extra functions
         enableActions()
       }
@@ -85,10 +100,48 @@ const enableActions = () => {
   postsButton.click()
 }
 
-followButton.addEventListener('click', () => {
+followButton.addEventListener('click', async () => {
   if(followButton.innerText === 'Edit profile'){
     editModal.classList.toggle('hidden');
     editBio.innerText = bioField.innerHTML
+  } else if (followButton.innerText === 'Follow') {
+    const user = parseJwt(sessionStorage.getItem('token'))
+    if (user) {
+      const fetchOptions = {
+        method: 'POST',
+        headers: {
+          'Authorization': 'Bearer ' + sessionStorage.getItem('token'),
+        }
+      };
+      const response = await fetch(
+          url + '/user/follow/' + user.id + '/' + mUser.id, fetchOptions);
+      const json = await response.json();
+      if (json.error) {
+        alert(json.error);
+      } else {
+        followAmount++
+        followerAmountField.innerHTML = `<strong> ${followAmount} </strong> <br> followers`
+        followButton.innerText = 'Unfollow'
+      }
+    } else alert('You must be logged in to follow')
+    } else if (followButton.innerText === 'Unfollow') {
+    const userr = parseJwt(sessionStorage.getItem('token'))
+        const fetchOptions = {
+           method: 'DELETE',
+           headers: {
+            'Authorization': 'Bearer ' + sessionStorage.getItem('token'),
+      }
+    };
+    const response = await fetch(
+        url + '/user/unfollow/' + userr.id + '/' + mUser.id, fetchOptions);
+    const json = await response.json();
+    if (json.error) {
+      alert(json.error);
+    } else {
+      followAmount--
+      followerAmountField.innerHTML = `<strong> ${followAmount} </strong> <br> followers`
+      followButton.innerText = 'Follow'
+    }
   }
 });
 
