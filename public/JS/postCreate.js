@@ -404,11 +404,10 @@ const createPosts = async (posts) => {
     }else if (post.picFilename.includes('IMAGE')) {
       const postContent = document.createElement('img');
       postContent.src = url + '/thumbnails/' + post.picFilename;
-      console.log(postContent.src)
       postContent.alt = 'Post content';
       postContentDiv.appendChild(postContent);
     }
-    
+
     //Caption
     //Caption text
     const postCaption = document.createElement('p');
