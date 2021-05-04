@@ -14,6 +14,8 @@ const editForm = document.getElementById('editForm');
 const profilePic = document.getElementById('profilePic');
 const postsDiv = document.getElementById('posts');
 const postModal = document.getElementById('postModal');
+const body = document.querySelector('body');
+
 
 
 let mUser
@@ -24,6 +26,85 @@ let userPosts
 if(!(sessionStorage.getItem('token'))){
   document.getElementById('dAddPostBtn').style.display = 'none';
   desktopMyProfileBtn.style.display = 'none';
+} else {
+  const addPostButton = document.getElementById('dAddPostBtn');
+  addPostButton.addEventListener('click', () => {
+    const createPostModal = document.createElement('div');
+    createPostModal.className = 'modal';
+    const modalClose = document.createElement('button');
+    modalClose.className = 'modalClose';
+    modalClose.innerText = 'x';
+
+    modalClose.addEventListener('click', () => {
+      createPostModal.classList.toggle('hidden');
+      createPostModal.remove();
+    });
+
+    const postCreateContainer = document.createElement('div');
+    postCreateContainer.className = 'modal-container';
+    postCreateContainer.id = 'post-create-container';
+
+    //Form for post creation
+    const form = document.createElement('FORM');
+    form.id = 'post-create-form';
+    form.enctype = 'multipart/form-data';
+
+    const contentInput = document.createElement('INPUT');
+    contentInput.setAttribute('type', 'file');
+    contentInput.setAttribute('accept', 'image/*');
+    contentInput.setAttribute('placeholder', 'Choose File');
+    contentInput.setAttribute('name', 'content');
+    contentInput.required = true;
+
+    const captionInput = document.createElement('INPUT');
+    captionInput.setAttribute('type', 'text');
+    captionInput.setAttribute('placeholder', 'Caption');
+    captionInput.setAttribute('name', 'caption');
+
+    const postCreateSubmit = document.createElement('INPUT');
+    postCreateSubmit.setAttribute('type', 'submit');
+
+    form.appendChild(contentInput);
+    form.appendChild(captionInput);
+    form.appendChild(postCreateSubmit);
+
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+
+      if(captionInput.value.includes('#')) {
+        for(let hashtag of captionInput.value.match(/#[^\s#]*/gmi)) {
+          if(hashtag.length < 4) {
+            alert('Tag needs to be atleast 3 characters long')
+            return false;
+          }
+        }
+      }
+
+      const fd = new FormData(form);
+      const user = await getUser(loggedInUser());
+      const fetchOptions = {
+        method: 'POST',
+        headers: {
+          'Authorization': 'Bearer ' + sessionStorage.getItem('token'),
+        },
+        body: fd,
+      };
+      const response = await fetch(url + '/post/upload/' + user.id, fetchOptions);
+      const json = await response.json();
+      if (json.error) {
+        alert(json.error);
+      } else {
+        createPostModal.remove();
+        alert('Your post was successfully uploaded')
+        //New thumbnail of added post here
+      }
+    });
+    postCreateContainer.appendChild(form);
+
+    createPostModal.appendChild(modalClose);
+    createPostModal.appendChild(postCreateContainer);
+    body.appendChild(createPostModal);
+  });
 }
 
 const openPost = async (id) => {
