@@ -56,9 +56,15 @@ const get_hashtags = async (req, res) => {
 
 const crop_image = async (req, res, next) => {
   try {
-    const crop = await cropImage(req.file.path, req.file.filename);
-    if(crop) {
+    if (req.file.mimetype === 'video/mp4' ||
+        req.file.mimetype === 'video/peg' ||
+        req.file.mimetype === 'video/webm') {
       next();
+    } else {
+      const crop = await cropImage(req.file.path, req.file.filename);
+      if(crop) {
+        next();
+      }
     }
   }catch (e) {
     res.status(400).json({error: e.message});

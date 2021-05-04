@@ -10,6 +10,9 @@ const jsonParser = parser.json();
 const fileFilter = (req, file, cb) => {
   if (file.mimetype === 'image/jpeg' ||
       file.mimetype === 'image/png' ||
+      file.mimetype === 'video/mp4' ||
+      file.mimetype === 'video/mpeg' ||
+      file.mimetype === 'video/webm' ||
       file.mimetype === 'image/gif') {
     cb(null, true);
   } else {
@@ -19,9 +22,10 @@ const fileFilter = (req, file, cb) => {
 
 const testFile = (req, res, next) => {
   if (req.file) {
+    console.dir(req.file)
     next();
   } else {
-    res.status(400).json({error: 'File is not image or no file selected'});
+    res.status(400).json({error: 'File is not correct or no file selected'});
   }
 };
 
@@ -34,7 +38,30 @@ const isAdmin = (req, res, next) => {
   }
 }
 
-const upload = multer({dest: 'uploads/', fileFilter:fileFilter});
+const storage = multer.diskStorage(
+    {
+      destination: (req, file, cb) => {
+        cb(null, 'uploads/')
+      },
+      filename: (req, file, cb) => {
+        if (file.mimetype === 'video/mp4' ||
+            file.mimetype === 'video/peg' ||
+            file.mimetype === 'video/webm') {
+          cb(null, 'VIDEO-' + Date.now() + Math.round(Math.random() * 1E9))
+        } else {
+          cb(null, 'IMAGE-' + Date.now() + Math.round(Math.random() * 1E9))
+        }
+      }
+    }
+)
+
+const upload = multer({
+  fileFilter,
+  // 50MB = 52428800
+  // 8 MB = 8388608
+  //limits: {fileSize: }
+  storage: storage
+});
 
 //GET
 router.get('/', postController.posts_get);
