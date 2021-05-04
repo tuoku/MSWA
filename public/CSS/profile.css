@@ -56,13 +56,14 @@ header {
 .feeds {
     display: flex;
     flex-flow: row wrap;
-    z-index: -2;
 }
 
 .feedPic {
     width: 31vw;
     height: 31vw;
     margin: 1vw;
+    object-fit: cover;
+    cursor: pointer;
 }
 
 #feedTitles {
@@ -180,6 +181,16 @@ textarea {
     max-width: 90%;
 }
 
+
+.post {
+    position: absolute;
+    top: 0;
+    left: 50%;
+    margin-left: -250px;
+}
+.form {
+    background-color: transparent;
+}
 .modal-container {
     display: flex;
     flex-direction: column;
