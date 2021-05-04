@@ -55,7 +55,9 @@
 
 .post-content {
     min-width: 100%;
+    max-height: 1000px;
     margin: 10px 0;
+    overflow: hidden;
 }
 
 .post-end{
