@@ -73,6 +73,8 @@ router.get('/hashtag/:chars', postController.get_hashtags);
 router.get('/hashtag/get/popular', postController.get_popular_hashtags);
 router.get('/search/hashtag/:tagid', postController.post_get_by_hashtag);
 router.get('/userliked/:id', postController.post_get_liked_by_user);
+router.get('/userposts/:id', postController.user_posts);
+router.get('/getbyid/:id', postController.get_by_id);
 
 //POST
 router.post('/:postid/comment/:ownerid', passport.authenticate('jwt', {session: false}), jsonParser, postController.post_comment_upload);
