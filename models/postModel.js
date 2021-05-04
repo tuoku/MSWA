@@ -153,6 +153,13 @@ const uploadComment = async (post_id, user_id, comment) => {
 
 const postCreate = async (user_id, content, caption) => {
   try{
+    if(caption.includes('#')) {
+      for(let hashtag of caption.match(/#[^\s#]*/gmi)) {
+        if(hashtag.length < 4) {
+          return false;
+        }
+      }
+    }
     const [row] = await promisePool.execute('INSERT INTO user_post (owner_id, picFilename, caption, vst) VALUES (?, ?, ?, ?)',
         [user_id, content.filename, caption, dateTimeMaker()]);
     await parseTags(caption, row.insertId)
