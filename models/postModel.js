@@ -204,6 +204,25 @@ const popularTags = async () => {
   }
 }
 
+const userPosts = async (id) => {
+  try {
+    const [row] = await promisePool.query('SELECT * FROM user_post WHERE owner_id = ? AND vet IS NULL ORDER BY vst DESC', [id]);
+    console.log(row)
+    return row;
+  }catch (e) {
+    console.error('userPosts: ', e.message);
+  }
+}
+
+const getById = async (id) => {
+  try {
+    const [rows] = await promisePool.query('SELECT * FROM user_post WHERE post_id = ?',[id]);
+    return rows;
+  } catch (e) {
+    console.error('getById:', e.message);
+  }
+};
+
 
 
 module.exports = {
@@ -220,4 +239,6 @@ module.exports = {
   getPostsByHashtag,
   popularTags,
   getPostsLikedByUser,
+  userPosts,
+  getById,
 };
