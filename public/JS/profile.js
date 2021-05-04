@@ -12,12 +12,16 @@ const editModal = document.getElementById('editModal');
 const editBio = document.getElementById('bioEdit');
 const editForm = document.getElementById('editForm');
 const profilePic = document.getElementById('profilePic');
+const postsDiv = document.getElementById('posts');
+const postModal = document.getElementById('postModal');
 const body = document.querySelector('body');
+
 
 
 let mUser
 let isFollowing
 let followAmount
+let userPosts
 
 if(!(sessionStorage.getItem('token'))){
   document.getElementById('dAddPostBtn').style.display = 'none';
@@ -103,6 +107,15 @@ if(!(sessionStorage.getItem('token'))){
   });
 }
 
+const openPost = async (id) => {
+  document.getElementsByTagName('main').innerHTML = ''
+  postModal.classList.toggle('hidden');
+  const post = await fetch(url + '/post/getbyid/' + id)
+  const postt = await post.json()
+  console.dir(postt)
+  await createPosts(postt)
+}
+
 
 // get the requested users id from url params
 const queryString = window.location.search;
@@ -115,6 +128,8 @@ const init = async () => {
   const user = await response.json()
   mUser = user[0]
   followAmount = mUser.followers
+  const posts = await fetch(url + '/post/userposts/' + userId)
+  userPosts = await posts.json()
   try {
     const following = await fetch(
         url + '/user/follows/' + parseJwt(sessionStorage.getItem('token')).id +
@@ -148,6 +163,17 @@ init().then( () => {
   } catch (e){
     console.log(e)
   }
+  if(userPosts.length > 0) {
+    postsDiv.innerHTML = ''
+    for (let p of userPosts) {
+      const img = document.createElement('img')
+      img.src = url + '/uploads/' + p.picFilename
+      img.classList.add('feedPic')
+      img.setAttribute("onclick", 'openPost("'+ p.post_id + '")')
+      postsDiv.appendChild(img)
+    }
+  }
+  document.getElementsByTagName('main').innerHTML = ''
 })
 
 // add event listeners to tabs (own profile only)

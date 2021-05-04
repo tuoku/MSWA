@@ -90,6 +90,16 @@ const get_popular_hashtags = async (req, res) => {
   res.send(tags);
 };
 
+const user_posts = async (req, res) => {
+  const posts = await postModel.userPosts(req.params.id);
+  res.json(posts)
+}
+
+const get_by_id = async (req, res) => {
+  const post = await postModel.getById(req.params.id);
+  res.json(post)
+}
+
 module.exports = {
   posts_get,
   post_get_username,
@@ -106,4 +116,6 @@ module.exports = {
   post_get_by_hashtag,
   get_popular_hashtags,
   post_get_liked_by_user,
+  user_posts,
+  get_by_id,
 };
