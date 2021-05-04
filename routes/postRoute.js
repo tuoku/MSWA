@@ -45,7 +45,7 @@ const storage = multer.diskStorage(
       },
       filename: (req, file, cb) => {
         if (file.mimetype === 'video/mp4' ||
-            file.mimetype === 'video/peg' ||
+            file.mimetype === 'video/mpeg' ||
             file.mimetype === 'video/webm') {
           cb(null, 'VIDEO-' + Date.now() + Math.round(Math.random() * 1E9))
         } else {
