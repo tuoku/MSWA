@@ -29,7 +29,7 @@ userCreatePost.addEventListener('click', () => {
 
   const contentInput = document.createElement('INPUT');
   contentInput.setAttribute('type', 'file');
-  contentInput.setAttribute('accept', 'image/*');
+  contentInput.setAttribute('accept', '.jpg, .jpeg, .png, .gif, .mp4, .mpeg, .webm');
   contentInput.setAttribute('placeholder', 'Choose File');
   contentInput.setAttribute('name', 'content');
   contentInput.required = true;
@@ -108,7 +108,7 @@ desktopUserCreatePost.addEventListener('click', () => {
 
   const contentInput = document.createElement('INPUT');
   contentInput.setAttribute('type', 'file');
-  contentInput.setAttribute('accept', 'image/*');
+  contentInput.setAttribute('accept', '.jpg, .jpeg, .png, .gif, .mp4, .mpeg, .webm');
   contentInput.setAttribute('placeholder', 'Choose File');
   contentInput.setAttribute('name', 'content');
   contentInput.required = true;
@@ -390,11 +390,25 @@ const createPosts = async (posts) => {
     postSettingsDiv.appendChild(postSettingsIcon);
 
     //Post content
-    const postContent = document.createElement('img');
-    postContent.src = url + '/thumbnails/' + post.picFilename;
-    postContent.alt = 'Post content';
-    postContentDiv.appendChild(postContent);
+    if(post.picFilename.includes('VIDEO')) {
+      const postContent = document.createElement('video');
+      postContent.width = 500;
+      postContent.controls = true;
+      const postContentSource = document.createElement('source');
+      postContentSource.src = url + '/uploads/' + post.picFilename;
+      postContentSource.type = 'video/mp4';
 
+      postContent.appendChild(postContentSource)
+      postContentDiv.appendChild(postContent);
+
+    }else if (post.picFilename.includes('IMAGE')) {
+      const postContent = document.createElement('img');
+      postContent.src = url + '/thumbnails/' + post.picFilename;
+      console.log(postContent.src)
+      postContent.alt = 'Post content';
+      postContentDiv.appendChild(postContent);
+    }
+    
     //Caption
     //Caption text
     const postCaption = document.createElement('p');
