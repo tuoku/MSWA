@@ -48,6 +48,16 @@ userCreatePost.addEventListener('click', () => {
 
   form.addEventListener('submit', async (e) => {
     e.preventDefault();
+
+    if(captionInput.value.includes('#')) {
+      for(let hashtag of captionInput.value.match(/#[^\s#]*/gmi)) {
+        if(hashtag.length < 4) {
+          alert('Tag needs to be atleast 3 characters long')
+          return false;
+        }
+      }
+    }
+
     const fd = new FormData(form);
     const user = await getUser(loggedInUser());
     const fetchOptions = {
@@ -118,13 +128,14 @@ desktopUserCreatePost.addEventListener('click', () => {
   form.addEventListener('submit', async (e) => {
     e.preventDefault();
 
-    console.dir(captionInput)
-
-    // if(captionInput.innerText.includes('#')) {
-    //   for(let hashtag of captionInput.match(/#[^\s#]*/gmi)) {
-    //     console.log(hashtag.length)
-    //   }
-    // }
+    if(captionInput.value.includes('#')) {
+      for(let hashtag of captionInput.value.match(/#[^\s#]*/gmi)) {
+        if(hashtag.length < 4) {
+          alert('Tag needs to be atleast 3 characters long')
+          return false;
+        }
+      }
+    }
 
     const fd = new FormData(form);
     const user = await getUser(loggedInUser());
@@ -390,22 +401,27 @@ const createPosts = async (posts) => {
     postCaption.className = 'hide-caption';
     postCaption.innerText = post.caption;
 
-    let template = '<a class="hashtag" onclick="onHashtagClicked({%n})">{%}</a>';
+    try{
+      let template = '<a class="hashtag" onclick="onHashtagClicked({%n})">{%}</a>';
 
-    let html = post.caption
-    let matched = html.match(/(\S*#\[[^\]]+\])|(\S*#\S+)/gi);
-    for(let x of matched) {
-      let templ;
-      templ = template;
-      templ = templ.replace('{%}', x.replace('#', ''));
-      templ = templ.replace('{%n}', "'" + x.slice(1) + "'");
-      html = html.replace(x, templ);
+      let html = post.caption
+      let matched = html.match(/(\S*#\[[^\]]+\])|(\S*#\S+)/gi);
+      for(let x of matched) {
+        let templ;
+        templ = template;
+        templ = templ.replace('{%}', x.replace('#', ''));
+        templ = templ.replace('{%n}', "'" + x.slice(1) + "'");
+        html = html.replace(x, templ);
+      }
+      postCaption.innerHTML = html;
+      const postCaptionLinks = postCaption.getElementsByClassName('hashtag')
+      for(let x of postCaptionLinks) {
+        x.innerText = '#' + x.innerText
+      }
+    }catch (e) {
+      console.log(e.message)
     }
-    postCaption.innerHTML = html;
-    const postCaptionLinks = postCaption.getElementsByClassName('hashtag')
-    for(let x of postCaptionLinks) {
-      x.innerText = '#' + x.innerText
-    }
+
     // if(post.caption.includes('@')) {
     //
     // }
@@ -566,6 +582,7 @@ const createPosts = async (posts) => {
           const commentInputText = document.createElement('INPUT');
           const commentSubmit = document.createElement('INPUT');
           commentInputText.setAttribute('type', 'text');
+          commentInputText.maxLength = 255;
           commentSubmit.setAttribute('type', 'submit');
           commentSubmit.value = 'Comment';
 
