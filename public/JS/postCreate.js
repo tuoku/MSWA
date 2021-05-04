@@ -117,6 +117,15 @@ desktopUserCreatePost.addEventListener('click', () => {
 
   form.addEventListener('submit', async (e) => {
     e.preventDefault();
+
+    console.dir(captionInput)
+
+    // if(captionInput.innerText.includes('#')) {
+    //   for(let hashtag of captionInput.match(/#[^\s#]*/gmi)) {
+    //     console.log(hashtag.length)
+    //   }
+    // }
+
     const fd = new FormData(form);
     const user = await getUser(loggedInUser());
     const fetchOptions = {
@@ -131,7 +140,6 @@ desktopUserCreatePost.addEventListener('click', () => {
     if (json.error) {
       alert(json.error);
     } else {
-      alert('Post was successfully added');
       createPostModal.remove();
       await getPosts()
     }
@@ -281,9 +289,11 @@ const getPostsByHashtag = async (id) => {
 }
 
 const onHashtagClicked = async (hashtag) => {
+  console.log('clicked: ' + hashtag)
   const hashTagText = hashtag.replace('#', '')
   const tagResponse = await fetch(url + '/post/hashtag/' + hashTagText);
   const tagJson = await tagResponse.json()
+  console.log(tagJson)
   const tagId = tagJson[0].id;
   await getPostsByHashtag(tagId)
 }
@@ -380,16 +390,21 @@ const createPosts = async (posts) => {
     postCaption.className = 'hide-caption';
     postCaption.innerText = post.caption;
 
-    if(post.caption.includes('#')) {
-      for(let hashtag of post.caption.match(/#[^\s#]*/gmi)) {
-        const hashtagLink = document.createElement('a');
-        hashtagLink.innerText = hashtag
-        hashtagLink.className = 'hashtag'
-        hashtagLink.setAttribute("onclick", "onHashtagClicked('" + hashtag +"')")
-        postCaption.replaceWith(hashtagLink)
-        console.log(hashtagLink.outerHTML)
-        postCaption.innerHTML = postCaption.innerHTML.replace(hashtag, hashtagLink.outerHTML)
-      }
+    let template = '<a class="hashtag" onclick="onHashtagClicked({%n})">{%}</a>';
+
+    let html = post.caption
+    let matched = html.match(/(\S*#\[[^\]]+\])|(\S*#\S+)/gi);
+    for(let x of matched) {
+      let templ;
+      templ = template;
+      templ = templ.replace('{%}', x.replace('#', ''));
+      templ = templ.replace('{%n}', "'" + x.slice(1) + "'");
+      html = html.replace(x, templ);
+    }
+    postCaption.innerHTML = html;
+    const postCaptionLinks = postCaption.getElementsByClassName('hashtag')
+    for(let x of postCaptionLinks) {
+      x.innerText = '#' + x.innerText
     }
     // if(post.caption.includes('@')) {
     //
