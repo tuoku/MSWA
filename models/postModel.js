@@ -154,7 +154,8 @@ const uploadComment = async (post_id, user_id, comment) => {
 const postCreate = async (user_id, content, caption) => {
   try{
     if(caption.includes('#')) {
-      for(let hashtag of caption.match(/#[^\s#]*/gmi)) {
+      for(let hashtag of caption.match(/(\S*#\[[^\]]+\])|(\S*#\S+)/gi)) {
+        caption = caption.replace(hashtag, hashtag.toLowerCase())
         if(hashtag.length < 4) {
           return false;
         }
