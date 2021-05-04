@@ -45,7 +45,7 @@ const storage = multer.diskStorage(
       },
       filename: (req, file, cb) => {
         if (file.mimetype === 'video/mp4' ||
-            file.mimetype === 'video/peg' ||
+            file.mimetype === 'video/mpeg' ||
             file.mimetype === 'video/webm') {
           cb(null, 'VIDEO-' + Date.now() + Math.round(Math.random() * 1E9))
         } else {
@@ -59,7 +59,7 @@ const upload = multer({
   fileFilter,
   // 50MB = 52428800
   // 8 MB = 8388608
-  //limits: {fileSize: }
+  limits: {fileSize: 52428800},
   storage: storage
 });
 
