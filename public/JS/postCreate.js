@@ -405,6 +405,7 @@ const createPosts = async (posts) => {
       const postContent = document.createElement('video');
       postContent.width = 500;
       postContent.controls = true;
+      postContent.loop = true;
       const postContentSource = document.createElement('source');
       postContentSource.src = url + '/uploads/' + post.picFilename;
       postContentSource.type = 'video/mp4';
