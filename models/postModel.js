@@ -14,6 +14,59 @@ const dateTimeMaker = () => {
   return (year + '-' + month + '-' + date + ' ' + hours + ':' + minutes + ':' + seconds);
 };
 
+const dateTimeMakerDayAgo = () => {
+  let date_ob = new Date();
+  let dayAgo = date_ob.getDate()-1
+  date_ob.setDate(dayAgo)
+  let date = ('0' + date_ob.getDate()).slice(-2);
+  let month = ('0' + (date_ob.getMonth() + 1)).slice(-2);
+  let year = date_ob.getFullYear();
+  let hours = date_ob.getHours();
+  let minutes = date_ob.getMinutes();
+  let seconds = date_ob.getSeconds();
+  return (year + '-' + month + '-' + date + ' ' + hours + ':' + minutes + ':' + seconds);
+};
+
+const dateTimeMakerWeekAgo = () => {
+  let date_ob = new Date();
+  let weekAgo = date_ob.getDate()-7
+  date_ob.setDate(weekAgo)
+  let date = ('0' + (date_ob.getDate())).slice(-2);
+  let month = ('0' + (date_ob.getMonth() + 1)).slice(-2);
+  let year = date_ob.getFullYear();
+  let hours = date_ob.getHours();
+  let minutes = date_ob.getMinutes();
+  let seconds = date_ob.getSeconds();
+  return (year + '-' + month + '-' + date + ' ' + hours + ':' + minutes + ':' + seconds);
+};
+
+const dateTimeMakerMonthAgo = () => {
+  let date_ob = new Date();
+  let monthAgo = date_ob.getMonth()-1
+  date_ob.setMonth(monthAgo);
+  let date = ('0' + (date_ob.getDate())).slice(-2);
+  let month = ('0' + (date_ob.getMonth() + 1)).slice(-2);
+  let year = date_ob.getFullYear();
+  let hours = date_ob.getHours();
+  let minutes = date_ob.getMinutes();
+  let seconds = date_ob.getSeconds();
+  return (year + '-' + month + '-' + date + ' ' + hours + ':' + minutes + ':' + seconds);
+};
+
+const dateTimeMakerYearAgo = () => {
+  let date_ob = new Date();
+  let yearAgo = date_ob.getFullYear()-1
+  date_ob.setFullYear(yearAgo);
+  let date = ('0' + (date_ob.getDate())).slice(-2);
+  let month = ('0' + (date_ob.getMonth() + 1)).slice(-2);
+  let year = date_ob.getFullYear();
+  let hours = date_ob.getHours();
+  let minutes = date_ob.getMinutes();
+  let seconds = date_ob.getSeconds();
+  return (year + '-' + month + '-' + date + ' ' + hours + ':' + minutes + ':' + seconds);
+};
+
+
 // Method for parsing hashtags from a string into an array of strings
 // and uploading each tag into db
 // each tag is UNIQUE in db
@@ -231,6 +284,107 @@ const getById = async (id) => {
   }
 };
 
+const getPostsByParams = async (sort, since) => {
+  try{
+    console.log(sort)
+    console.log(since)
+    if(sort === 'topLikes') {
+      if(since === 'today') {
+        console.log(dateTimeMaker())
+        console.log(dateTimeMakerDayAgo())
+        const [rows] = await promisePool.query('SELECT user_post.*, (SELECT COUNT(liked) FROM post_like WHERE liked = 1 AND post_like.post_id = user_post.post_id) - (SELECT COUNT(liked) FROM post_like WHERE liked = 0 AND post_like.post_id = user_post.post_id) AS likesCount FROM user_post LEFT JOIN post_like ON user_post.post_id = post_like.post_id WHERE user_post.vst >= ? AND user_post.vet IS NULL GROUP BY post_id ORDER BY likesCount DESC', [dateTimeMakerDayAgo()])
+        return rows;
+      }
+      if(since === 'week') {
+        console.log(dateTimeMaker())
+        console.log(dateTimeMakerWeekAgo())
+        const [rows] = await promisePool.query('SELECT user_post.*, (SELECT COUNT(liked) FROM post_like WHERE liked = 1 AND post_like.post_id = user_post.post_id) - (SELECT COUNT(liked) FROM post_like WHERE liked = 0 AND post_like.post_id = user_post.post_id) AS likesCount FROM user_post LEFT JOIN post_like ON user_post.post_id = post_like.post_id WHERE user_post.vst >= ? AND user_post.vet IS NULL GROUP BY post_id ORDER BY likesCount DESC', [dateTimeMakerWeekAgo()])
+        return rows;
+      }
+      if(since === 'month') {
+        console.log(dateTimeMaker())
+        console.log(dateTimeMakerMonthAgo())
+        const [rows] = await promisePool.query('SELECT user_post.*, (SELECT COUNT(liked) FROM post_like WHERE liked = 1 AND post_like.post_id = user_post.post_id) - (SELECT COUNT(liked) FROM post_like WHERE liked = 0 AND post_like.post_id = user_post.post_id) AS likesCount FROM user_post LEFT JOIN post_like ON user_post.post_id = post_like.post_id WHERE user_post.vst >= ? AND user_post.vet IS NULL GROUP BY post_id ORDER BY likesCount DESC', [dateTimeMakerMonthAgo()])
+        return rows;
+      }
+      if(since === 'year') {
+        console.log(dateTimeMaker())
+        console.log(dateTimeMakerYearAgo())
+        const [rows] = await promisePool.query('SELECT user_post.*, (SELECT COUNT(liked) FROM post_like WHERE liked = 1 AND post_like.post_id = user_post.post_id) - (SELECT COUNT(liked) FROM post_like WHERE liked = 0 AND post_like.post_id = user_post.post_id) AS likesCount FROM user_post LEFT JOIN post_like ON user_post.post_id = post_like.post_id WHERE user_post.vst >= ? AND user_post.vet IS NULL GROUP BY post_id ORDER BY likesCount DESC', [dateTimeMakerYearAgo()])
+        return rows;
+      }
+      if(since === 'all') {
+        const [rows] = await promisePool.query('SELECT user_post.*, (SELECT COUNT(liked) FROM post_like WHERE liked = 1 AND post_like.post_id = user_post.post_id) - (SELECT COUNT(liked) FROM post_like WHERE liked = 0 AND post_like.post_id = user_post.post_id) AS likesCount FROM user_post LEFT JOIN post_like ON user_post.post_id = post_like.post_id WHERE user_post.vet IS NULL GROUP BY post_id ORDER BY likesCount DESC')
+        return rows;
+      }
+    }
+    if(sort === 'topDislikes') {
+      console.log('sort by dislikes')
+      if(since === 'today') {
+        console.log(dateTimeMaker())
+        console.log(dateTimeMakerDayAgo())
+        const [rows] = await promisePool.query('SELECT user_post.*, (SELECT COUNT(liked) FROM post_like WHERE liked = 1 AND post_like.post_id = user_post.post_id) - (SELECT COUNT(liked) FROM post_like WHERE liked = 0 AND post_like.post_id = user_post.post_id) AS likesCount FROM user_post LEFT JOIN post_like ON user_post.post_id = post_like.post_id WHERE user_post.vst >= ? AND user_post.vet IS NULL GROUP BY post_id ORDER BY likesCount ASC', [dateTimeMakerDayAgo()])
+        return rows;
+      }
+      if(since === 'week') {
+        console.log(dateTimeMaker())
+        console.log(dateTimeMakerWeekAgo())
+        const [rows] = await promisePool.query('SELECT user_post.*, (SELECT COUNT(liked) FROM post_like WHERE liked = 1 AND post_like.post_id = user_post.post_id) - (SELECT COUNT(liked) FROM post_like WHERE liked = 0 AND post_like.post_id = user_post.post_id) AS likesCount FROM user_post LEFT JOIN post_like ON user_post.post_id = post_like.post_id WHERE user_post.vst >= ? AND user_post.vet IS NULL GROUP BY post_id ORDER BY likesCount ASC', [dateTimeMakerWeekAgo()])
+        return rows;
+      }
+      if(since === 'month') {
+        console.log(dateTimeMaker())
+        console.log(dateTimeMakerMonthAgo())
+        const [rows] = await promisePool.query('SELECT user_post.*, (SELECT COUNT(liked) FROM post_like WHERE liked = 1 AND post_like.post_id = user_post.post_id) - (SELECT COUNT(liked) FROM post_like WHERE liked = 0 AND post_like.post_id = user_post.post_id) AS likesCount FROM user_post LEFT JOIN post_like ON user_post.post_id = post_like.post_id WHERE user_post.vst >= ? AND user_post.vet IS NULL GROUP BY post_id ORDER BY likesCount ASC', [dateTimeMakerMonthAgo()])
+        return rows;
+      }
+      if(since === 'year') {
+        console.log(dateTimeMaker())
+        console.log(dateTimeMakerYearAgo())
+        const [rows] = await promisePool.query('SELECT user_post.*, (SELECT COUNT(liked) FROM post_like WHERE liked = 1 AND post_like.post_id = user_post.post_id) - (SELECT COUNT(liked) FROM post_like WHERE liked = 0 AND post_like.post_id = user_post.post_id) AS likesCount FROM user_post LEFT JOIN post_like ON user_post.post_id = post_like.post_id WHERE user_post.vst >= ? AND user_post.vet IS NULL GROUP BY post_id ORDER BY likesCount ASC', [dateTimeMakerYearAgo()])
+        return rows;
+      }
+      if(since === 'all') {
+        const [rows] = await promisePool.query('SELECT user_post.*, (SELECT COUNT(liked) FROM post_like WHERE liked = 1 AND post_like.post_id = user_post.post_id) - (SELECT COUNT(liked) FROM post_like WHERE liked = 0 AND post_like.post_id = user_post.post_id) AS likesCount FROM user_post LEFT JOIN post_like ON user_post.post_id = post_like.post_id WHERE user_post.vet IS NULL GROUP BY post_id ORDER BY likesCount ASC')
+        return rows;
+      }
+    }
+    if(sort === 'mostComments') {
+      console.log('sort by com')
+      if(since === 'today') {
+        console.log(dateTimeMaker())
+        console.log(dateTimeMakerDayAgo())
+        const [rows] = await promisePool.query('SELECT user_post.*, COUNT(comment_id) AS commentCount FROM user_post, post_comment WHERE post_comment.post_id = user_post.post_id AND user_post.vst >= ? AND user_post.vet IS NULL GROUP BY post_id ORDER BY commentCount DESC', [dateTimeMakerDayAgo()])
+        return rows;
+      }
+      if(since === 'week') {
+        console.log(dateTimeMaker())
+        console.log(dateTimeMakerWeekAgo())
+        const [rows] = await promisePool.query('SELECT user_post.*, COUNT(comment_id) AS commentCount FROM user_post, post_comment WHERE post_comment.post_id = user_post.post_id AND user_post.vst >= ? AND user_post.vet IS NULL GROUP BY post_id ORDER BY commentCount DESC', [dateTimeMakerWeekAgo()])
+        return rows;
+      }
+      if(since === 'month') {
+        console.log(dateTimeMaker())
+        console.log(dateTimeMakerMonthAgo())
+        const [rows] = await promisePool.query('SELECT user_post.*, COUNT(comment_id) AS commentCount FROM user_post, post_comment WHERE post_comment.post_id = user_post.post_id AND user_post.vst >= ? AND user_post.vet IS NULL GROUP BY post_id ORDER BY commentCount DESC', [dateTimeMakerMonthAgo()])
+        return rows;
+      }
+      if(since === 'year') {
+        console.log(dateTimeMaker())
+        console.log(dateTimeMakerYearAgo())
+        const [rows] = await promisePool.query('SELECT user_post.*, COUNT(comment_id) AS commentCount FROM user_post, post_comment WHERE post_comment.post_id = user_post.post_id AND user_post.vst >= ? AND user_post.vet IS NULL GROUP BY post_id ORDER BY commentCount DESC', [dateTimeMakerYearAgo()])
+        return rows;
+      }
+      if(since === 'all') {
+        const [rows] = await promisePool.query('SELECT user_post.*, COUNT(comment_id) AS commentCount FROM user_post, post_comment WHERE post_comment.post_id = user_post.post_id AND user_post.vet IS NULL GROUP BY post_id ORDER BY commentCount DESC')
+        return rows;
+      }
+    }
+  }catch (e) {
+    console.error('getPostsByParams:', e.message);
+  }
+}
+
 
 
 module.exports = {
@@ -249,4 +403,5 @@ module.exports = {
   getPostsLikedByUser,
   userPosts,
   getById,
+  getPostsByParams,
 };
