@@ -106,6 +106,11 @@ const get_by_id = async (req, res) => {
   res.json(post)
 }
 
+const get_posts_by_params = async (req, res) => {
+  const posts = await postModel.getPostsByParams(req.params.sort, req.params.since)
+  res.json(posts);
+}
+
 module.exports = {
   posts_get,
   post_get_username,
@@ -124,4 +129,5 @@ module.exports = {
   post_get_liked_by_user,
   user_posts,
   get_by_id,
+  get_posts_by_params,
 };

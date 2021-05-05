@@ -169,7 +169,11 @@ const getPosts = async () => {
   await createPosts(posts);
 };
 
-getPosts();
+if(window.location.href.includes('index.html')) {
+  getPosts();
+}
+
+// getPosts()
 
 //Parses token and returns user id if user is signed in
 const loggedInUser = (() => {
@@ -309,6 +313,9 @@ const getPostsByHashtag = async (id) => {
 const onHashtagClicked = async (hashtag) => {
   console.log('clicked: ' + hashtag)
   const hashTagText = hashtag.replace('#', '')
+  // if(window.location.href.includes('profile.html')) {
+  //   window.location.href = `index.html?tag=${hashtag}`
+  // }
   const tagResponse = await fetch(url + '/post/hashtag/' + hashTagText);
   const tagJson = await tagResponse.json()
   console.log(tagJson)
@@ -327,8 +334,12 @@ const createPosts = async (posts) => {
     alert('No posts found')
   } else {
     main.innerHTML = '';
+    console.log('main cleared')
   }
-  for (const post of posts) {
+  if(window.location.href.includes('index.html')) {
+    await sortButtons()
+  }
+  for await (const post of posts) {
     //Creates article elements which is container for post
     const postBody = document.createElement('article');
 
@@ -401,6 +412,7 @@ const createPosts = async (posts) => {
       const postContent = document.createElement('video');
       postContent.width = 500;
       postContent.controls = true;
+      postContent.loop = true;
       const postContentSource = document.createElement('source');
       postContentSource.src = url + '/uploads/' + post.picFilename;
       postContentSource.type = 'video/mp4';
