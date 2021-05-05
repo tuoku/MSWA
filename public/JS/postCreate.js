@@ -206,6 +206,13 @@ const openSettings = async (postid) => {
       settingsModal.remove();
     });
 
+    window.onclick = () => {
+      //console.dir(event)
+      if (event.target === settingsModal) {
+        settingsModal.remove();
+      }
+    }
+
     const buttonContainer = document.createElement('div');
     buttonContainer.className = 'modal-container';
 
