@@ -18,6 +18,12 @@ userCreatePost.addEventListener('click', () => {
     createPostModal.remove();
   });
 
+  window.addEventListener('click', (e) => {
+    if(e.target === createPostModal) {
+      createPostModal.remove()
+    }
+  })
+
   const postCreateContainer = document.createElement('div');
   postCreateContainer.className = 'modal-container';
   postCreateContainer.id = 'post-create-container';
@@ -96,6 +102,12 @@ desktopUserCreatePost.addEventListener('click', () => {
     createPostModal.classList.toggle('hidden');
     createPostModal.remove();
   });
+
+  window.addEventListener('click', (e) => {
+    if(e.target === createPostModal) {
+      createPostModal.remove()
+    }
+  })
 
   const postCreateContainer = document.createElement('div');
   postCreateContainer.className = 'modal-container';
@@ -229,12 +241,11 @@ const openSettings = async (postid) => {
       settingsModal.remove();
     });
 
-    window.onclick = () => {
-      //console.dir(event)
-      if (event.target === settingsModal) {
-        settingsModal.remove();
+    window.addEventListener('click', (e) => {
+      if(e.target === settingsModal) {
+        settingsModal.remove()
       }
-    }
+    })
 
     const buttonContainer = document.createElement('div');
     buttonContainer.className = 'modal-container';

@@ -246,7 +246,7 @@ a {
 /*}*/
 
 @media only screen and (max-width: 500px) {
-    .post, main, div, .sort-button-div {
+    .post, main, div {
         width: 100%;
     }
 

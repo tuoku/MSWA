@@ -1,7 +1,6 @@
 body {
     margin:0;
     -ms-overflow-style: none;
-    scrollbar-width: none;
     font-family: 'Poppins', sans-serif;
     overflow:scroll;
     display:block;

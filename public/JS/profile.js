@@ -20,6 +20,13 @@ let isFollowing
 let followAmount
 let userPosts
 
+window.addEventListener('click', (e) => {
+  if(e.target === postModal) {
+    document.getElementsByTagName('main').innerHTML = ''
+    postModal.classList.toggle('hidden');
+  }
+})
+
 if(!(sessionStorage.getItem('token'))){
   document.getElementById('dAddPostBtn').style.display = 'none';
   desktopMyProfileBtn.style.display = 'none';
