@@ -187,7 +187,7 @@ textarea {
     left: 50%;
     margin-left: -250px;
 }
-.form {
+#postModal .form {
     background-color: transparent;
 }
 .modal-container {

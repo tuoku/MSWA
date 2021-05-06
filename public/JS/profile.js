@@ -96,7 +96,11 @@ init().then( () => {
     postsDiv.innerHTML = ''
     for (let p of userPosts) {
       const img = document.createElement('img')
-      img.src = url + '/uploads/' + p.picFilename
+      if(p.picFilename.substring(0,5) === 'VIDEO'){
+        img.src = 'ICONS/video.jpg'
+      } else {
+        img.src = url + '/uploads/' + p.picFilename
+      }
       img.classList.add('feedPic')
       img.setAttribute("onclick", 'openPost("'+ p.post_id + '")')
       postsDiv.appendChild(img)
@@ -107,7 +111,11 @@ init().then( () => {
     savedDiv.innerHTML = ''
     for (let p of userSaved) {
       const img = document.createElement('img')
-      img.src = url + '/uploads/' + p.picFilename
+      if(p.picFilename.substring(0,5) === 'VIDEO'){
+        img.src = 'ICONS/video.jpg'
+      } else {
+        img.src = url + '/uploads/' + p.picFilename
+      }
       img.classList.add('feedPic')
       img.setAttribute("onclick", 'openPost("'+ p.post_id + '")')
       savedDiv.appendChild(img)

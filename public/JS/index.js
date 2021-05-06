@@ -200,7 +200,7 @@ const createLists = (array, prefix, fieldName) => {
       // create a DIV element for each matching element:
       let b = document.createElement("DIV");
       if (fieldName === 'username'){
-        let imgSrc = url + '/uploads/profile/' + array[i].id + '.jpg'
+        let imgSrc = url + '/uploads/profile/' + array[i].profileFilename
         // insert profile pic
         b.innerHTML = "<img src='"+ imgSrc + "' class='suggestionImg imgWithPlaceholder'>"
         // insert a input field that will hold the current array item's value:
