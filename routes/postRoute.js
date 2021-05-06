@@ -76,6 +76,7 @@ router.get('/userliked/:id', postController.post_get_liked_by_user);
 router.get('/userposts/:id', postController.user_posts);
 router.get('/getbyid/:id', postController.get_by_id);
 router.get('/getby/:sort/since/:since', postController.get_posts_by_params)
+router.get('/savedby/:userid', postController.saved_by)
 
 //POST
 router.post('/:postid/comment/:ownerid', passport.authenticate('jwt', {session: false}), jsonParser, postController.post_comment_upload);
@@ -87,6 +88,7 @@ router.post('/upload/:id',
     postController.post_create);
 router.post('/remove/:id', passport.authenticate('jwt', {session: false}), isAdmin, postController.post_remove);
 router.post('/report/:postid/:reportid', passport.authenticate('jwt', {session: false}), postController.post_report);
-
+router.post('/save/:postId',  passport.authenticate('jwt', {session: false}), jsonParser, postController.save_post);
+router.post('/unsave/:postId',  passport.authenticate('jwt', {session: false}), jsonParser, postController.unsave_post);
 
 module.exports = router;

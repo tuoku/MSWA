@@ -18,15 +18,22 @@
 }
 
 .post-user-info {
-    width: 95%;
+    width: 90%;
     display: flex;
 }
 
 .post-settings {
-    width: 5%;
+    width: 10%;
     display: flex;
     justify-content: center;
     align-items: center;
+}
+
+#saveIcon {
+    width: 6vw;
+    height: 6vw;
+    max-width: 30px;
+    max-height: 30px;
 }
 
 .post-settings img {

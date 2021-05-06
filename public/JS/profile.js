@@ -13,12 +13,14 @@ const editBio = document.getElementById('bioEdit');
 const editForm = document.getElementById('editForm');
 const profilePic = document.getElementById('profilePic');
 const postsDiv = document.getElementById('posts');
+const savedDiv = document.getElementById('saved');
 const postModal = document.getElementById('postModal');
 
 let mUser
 let isFollowing
 let followAmount
 let userPosts
+let userSaved
 
 window.addEventListener('click', (e) => {
   if(e.target === postModal) {
@@ -55,6 +57,8 @@ const init = async () => {
   followAmount = mUser.followers
   const posts = await fetch(url + '/post/userposts/' + userId)
   userPosts = await posts.json()
+  const saved = await fetch(url + '/post/savedby/' + loggedInUser());
+  userSaved = await saved.json()
   try {
     const following = await fetch(
         url + '/user/follows/' + parseJwt(sessionStorage.getItem('token')).id +
@@ -96,6 +100,17 @@ init().then( () => {
       img.classList.add('feedPic')
       img.setAttribute("onclick", 'openPost("'+ p.post_id + '")')
       postsDiv.appendChild(img)
+    }
+  }
+
+  if(userSaved.length > 0) {
+    savedDiv.innerHTML = ''
+    for (let p of userSaved) {
+      const img = document.createElement('img')
+      img.src = url + '/uploads/' + p.picFilename
+      img.classList.add('feedPic')
+      img.setAttribute("onclick", 'openPost("'+ p.post_id + '")')
+      savedDiv.appendChild(img)
     }
   }
   document.getElementsByTagName('main').innerHTML = ''
