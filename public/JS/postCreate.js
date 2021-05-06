@@ -181,7 +181,7 @@ const getPosts = async () => {
   await createPosts(posts);
 };
 
-if(window.location.href.includes('index.html')) {
+if(!window.location.href.includes('profile.html')) {
   getPosts();
 }
 
