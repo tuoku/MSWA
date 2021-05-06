@@ -310,6 +310,34 @@ const getPostsByHashtag = async (id) => {
   return await createPosts(posts);
 }
 
+const savePost = async (post_id) => {
+  const user = (await parseJwt(sessionStorage.getItem('token')).id)
+  const fetchOptions = {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'Authorization': 'Bearer ' + sessionStorage.getItem('token'),
+    },
+    body: `{"user": ${user}}`,
+  };
+  const response = await fetch(url + '/post/save/' + post_id, fetchOptions)
+  // ...
+}
+
+const unsavePost = async (post_id) => {
+  const user = (await parseJwt(sessionStorage.getItem('token')).id)
+  const fetchOptions = {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'Authorization': 'Bearer ' + sessionStorage.getItem('token'),
+    },
+    body: `{"user": ${user}}`,
+  };
+  const response = await fetch(url + '/post/unsave/' + post_id, fetchOptions)
+  // ...
+}
+
 const onHashtagClicked = async (hashtag) => {
   console.log('clicked: ' + hashtag)
   const hashTagText = hashtag.replace('#', '')
@@ -326,9 +354,13 @@ const onHashtagClicked = async (hashtag) => {
 //TODO: Couple of posts at a time not the whole database
 const createPosts = async (posts) => {
   let listOfUserLiked = [];
+  let listOfUserSaved = [];
   if(loggedInUser()) {
     const response = await fetch(url + '/post/userliked/' + loggedInUser());
     listOfUserLiked = await response.json()
+
+    const responsee = await fetch(url + '/post/savedby/' + loggedInUser());
+    listOfUserSaved = await responsee.json()
   }
   if(posts.length === 0) {
     alert('No posts found')
@@ -401,6 +433,12 @@ const createPosts = async (posts) => {
     posterUsername.href = 'profile.html?id=' + post.owner_id;
     posterUsername.innerText = (await getUser(post.owner_id)).username;
     postUserUsernameDiv.appendChild(posterUsername);
+
+    // Save post button
+    const saveIcon = document.createElement('img');
+    saveIcon.id = 'saveIcon'
+    saveIcon.src = './ICONS/save.png';
+    postSettingsDiv.appendChild(saveIcon);
 
     //Top right settings icon/button
     const postSettingsIcon = document.createElement('img');
@@ -489,6 +527,12 @@ const createPosts = async (posts) => {
       }
     }
 
+    for await (const userSave of listOfUserSaved) {
+      if(post.post_id === userSave.post_id) {
+        saveIcon.src = './ICONS/saved.png';
+      }
+    }
+
     postLikeButtonDiv.appendChild(postLikeButton);
     postDislikeButtonDiv.appendChild(postDislikeButton);
     postCommentButtonDiv.appendChild(postCommentButton);
@@ -547,8 +591,24 @@ const createPosts = async (posts) => {
       window.location.href = 'profile.html?id=' + post.owner_id;
     });
 
-    postSettingsDiv.addEventListener('click', () => {
+    postSettingsIcon.addEventListener('click', () => {
       openSettings(post.post_id);
+    });
+
+    saveIcon.addEventListener('click', () => {
+
+      if(saveIcon.src.includes('saved')){
+        if(sessionStorage.getItem('token')) {
+          saveIcon.src = "./ICONS/save.png"
+          unsavePost(post.post_id)
+        } else alert('You must be logged in')
+      } else {
+        if(sessionStorage.getItem('token')) {
+          saveIcon.src = "./ICONS/saved.png"
+          savePost(post.post_id)
+        } else alert('You must be logged in to save posts')
+      }
+
     });
 
     postLikeButtonDiv.addEventListener('click', () => {

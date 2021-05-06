@@ -111,6 +111,23 @@ const get_posts_by_params = async (req, res) => {
   res.json(posts);
 }
 
+const save_post = async (req, res) => {
+  console.log(req.body)
+  const resp = await postModel.savePost(req.params.postId, req.body.user)
+  res.json(resp)
+}
+
+const unsave_post = async (req, res) => {
+  console.log(req.body)
+  const resp = await postModel.unsavePost(req.params.postId, req.body.user)
+  res.json(resp)
+}
+
+const saved_by = async (req, res) => {
+  const resp = await postModel.savedBy(req.params.userid)
+  res.json(resp)
+}
+
 module.exports = {
   posts_get,
   post_get_username,
@@ -130,4 +147,7 @@ module.exports = {
   user_posts,
   get_by_id,
   get_posts_by_params,
+  save_post,
+  unsave_post,
+  saved_by,
 };

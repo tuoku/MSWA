@@ -385,6 +385,35 @@ const getPostsByParams = async (sort, since) => {
   }
 }
 
+const savePost = async (postId, user) => {
+  console.log(postId,user)
+  try {
+    const [rows] = await promisePool.execute('INSERT INTO user_saved (post_id, owner_id) VALUES (?, ?)', [postId, user])
+    return rows
+  } catch (e) {
+    console.log(e.message)
+  }
+}
+
+const unsavePost = async (postId, user) => {
+  console.log(postId,user)
+  try {
+    const [rows] = await promisePool.execute('DELETE FROM user_saved WHERE post_id = ? AND owner_id = ?', [postId, user])
+    return rows
+  } catch (e) {
+    console.log(e.message)
+  }
+}
+
+const savedBy = async (userId) => {
+  try {
+    const [rows] = await promisePool.execute('SELECT user_post.* FROM user_post LEFT JOIN user_saved ON user_post.post_id = user_saved.post_id WHERE user_saved.owner_id = ?',[userId])
+    return rows
+  } catch (e) {
+    console.log(e.message)
+  }
+}
+
 
 
 module.exports = {
@@ -404,4 +433,7 @@ module.exports = {
   userPosts,
   getById,
   getPostsByParams,
+  savePost,
+  unsavePost,
+  savedBy,
 };
